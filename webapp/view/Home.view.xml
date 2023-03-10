@@ -1,0 +1,41 @@
+<mvc:View controllerName="xref.controller.Home"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m">
+    <Page title="{i18n>title}">
+        <content>
+            <Table items="{
+		        	path: '/',
+		        	sorter: { path: 'name' }
+	        	}">
+                <columns>
+                    <Column width="3rem">
+                        <Text text="{i18n>id}" />
+                    </Column>
+                    <Column width="20rem">
+                        <Text text="{i18n>name}" />
+                    </Column>
+                    <Column width="5rem">
+                        <Text text="{i18n>type}" />
+                    </Column>
+                    <Column width="15rem">
+                        <Text text="{i18n>system}" />
+                    </Column>
+                    <Column >
+                        <Text text="{i18n>date}" />
+                    </Column>
+                </columns>
+                <items>
+                    <ColumnListItem>
+                        <cells>
+                            <Text text="{id}" />
+                            <Text text="{name}" />
+                            <Text text="{type}" />
+                            <Text text="{system}" />
+                            <Text text="{date}" />
+                        </cells>
+                    </ColumnListItem>
+                </items>
+            </Table>
+        </content>
+    </Page>
+</mvc:View>
