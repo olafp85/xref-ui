@@ -14,7 +14,8 @@
 		        	path: '/',
 		        	sorter: { path: 'name' }
 	        	}"
-                updateFinished="onUpdateFinished">
+                updateFinished="onUpdateFinished"
+                sticky="ColumnHeaders">
                 <headerToolbar>
                     <Toolbar>
                         <Title text="{i18n>title} ({= ${view>/count}.toLocaleString()})" />
