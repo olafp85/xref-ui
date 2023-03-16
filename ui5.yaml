@@ -16,8 +16,8 @@ server:
             - /test-resources
           url: https://ui5.sap.com
         backend:
-          - path: /apps/xref-api
-            url: http://luukpohlmann.nl
+         - path: /apps/xref-api
+           url: https://luukpohlmann.nl
     - name: fiori-tools-appreload
       afterMiddleware: compression
       configuration:

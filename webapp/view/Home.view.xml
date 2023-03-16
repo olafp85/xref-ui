@@ -6,49 +6,95 @@
     <Page showHeader="false">
         <content>
             <Table id="table"
-                class="sapUiResponsiveMargin"
                 width="auto"
-                fixedLayout="false"
+                class="sapUiResponsiveMargin"
                 autoPopinMode="true"
                 items="{
-		        	path: '/',
+		        	path: 'xrefs>/',
 		        	sorter: { path: 'name' }
 	        	}"
-                updateFinished="onUpdateFinished"
-                sticky="ColumnHeaders">
+                fixedLayout="false"
+                sticky="ColumnHeaders"
+                hiddenInPopin="Low"
+                mode="{view>/table/mode}"
+                delete="onItemDelete"
+                updateFinished="onUpdateFinished">
                 <headerToolbar>
-                    <Toolbar>
-                        <Title text="{i18n>title} ({= ${view>/count}.toLocaleString()})" />
+                    <OverflowToolbar>
+                        <Title text="{i18n>title} ({= ${view>/table/count}.toLocaleString()})" />
                         <ToolbarSpacer/>
-                        <SearchField width="auto"
-                            liveChange="onSearch" />
-                        <Button tooltip="Sort"
+                        <SearchField liveChange="onSearch">
+                            <layoutData>
+                                <OverflowToolbarLayoutData maxWidth="15rem"
+                                    shrinkable="true"
+                                    priority="NeverOverflow"/>
+                            </layoutData>
+                        </SearchField>
+                        <OverflowToolbarButton text="Sort"
+                            tooltip="Sort"
                             icon="sap-icon://sort"
-                            press="onSort"/>
-                    </Toolbar>
+                            type="Transparent"
+                            press="onSort">
+                            <layoutData>
+                                <OverflowToolbarLayoutData group="1" />
+                            </layoutData>
+                        </OverflowToolbarButton>
+                        <OverflowToolbarButton text="Upload"
+                            tooltip="Upload"
+                            icon="sap-icon://upload"
+                            type="Transparent"
+                            visible="{view>/editMode}"
+                            press="onUpload">
+                            <layoutData>
+                                <OverflowToolbarLayoutData group="1" />
+                            </layoutData>
+                        </OverflowToolbarButton>
+                        <OverflowToolbarButton text="Display"
+                            tooltip="Display"
+                            icon="sap-icon://display"
+                            type="Transparent"
+                            visible="{view>/editMode}"
+                            press="onDisplay">
+                            <layoutData>
+                                <OverflowToolbarLayoutData group="1" />
+                            </layoutData>
+                        </OverflowToolbarButton>
+                        <OverflowToolbarButton text="Edit"
+                            tooltip="Edit"
+                            icon="sap-icon://edit"
+                            type="Transparent"
+                            visible="{= !${view>/editMode}}"
+                            press="onEdit">
+                            <layoutData>
+                                <OverflowToolbarLayoutData group="1" />
+                            </layoutData>
+                        </OverflowToolbarButton>
+                    </OverflowToolbar>
                 </headerToolbar>
                 <columns>
-                    <Column >
+                    <Column>
                         <Text text="{i18n>type}" />
                     </Column>
                     <Column>
                         <Text text="{i18n>name}" />
                     </Column>
-                    <Column>
+                    <Column importance="Low">
                         <Text text="{i18n>system}" />
                     </Column >
-                    <Column hAlign="Right">
+                    <Column importance="Low"
+                        hAlign="Right">
                         <Text text="{i18n>date}" />
                     </Column>
                 </columns>
                 <items>
-                    <ColumnListItem>
+                    <ColumnListItem type="{view>/columnListItem/type}"
+                        press="onItemPress">
                         <cells>
-                            <Text text="{= ${type}.toLowerCase()}" />
-                            <Text text="{name}" />
-                            <Text text="{system}" />
+                            <Text text="{= ${xrefs>type}.toLowerCase()}" />
+                            <Text text="{xrefs>name}" />
+                            <Text text="{xrefs>system}" />
                             <Text text="{
-                                path: 'date',
+                                path: 'xrefs>date',
                                 type: 'sap.ui.model.type.Date',
                                 formatOptions: {
                                     source: { pattern: 'yyyy-MM-dd' },

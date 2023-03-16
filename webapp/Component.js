@@ -29,6 +29,10 @@ sap.ui.define([
 
                 // set the device model
                 this.setModel(models.createDeviceModel(), "device");
+
+                // TODO 
+                const sXrefsUri = this.getManifestEntry("/sap.app/dataSources/mainService/uri");
+                console.log("URL from manifest", sXrefsUri);
             }
         });
     }
