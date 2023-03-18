@@ -3,7 +3,17 @@
     xmlns:mvc="sap.ui.core.mvc"
     xmlns:layout="sap.ui.layout"
     xmlns="sap.m">
-    <Page showHeader="false">
+    <Page title="{i18n>title}"
+        class="sapUiContentPadding sapUiResponsivePadding--header">
+        <headerContent>
+            <Text text="{view>/version}"></Text>
+            <Button text="{i18n>login}"
+                press="onLogin"
+                visible="{view>/action/login}"></Button>
+            <Button text="{i18n>logout}"
+                press="onLogout"
+                visible="{view>/action/logout}"></Button>
+        </headerContent>
         <content>
             <Table id="table"
                 width="auto"
@@ -21,7 +31,7 @@
                 updateFinished="onUpdateFinished">
                 <headerToolbar>
                     <OverflowToolbar>
-                        <Title text="{i18n>title} ({= ${view>/table/count}.toLocaleString()})" />
+                        <Title text="{i18n>tableHeader} ({view>/table/count})" />
                         <ToolbarSpacer/>
                         <SearchField liveChange="onSearch">
                             <layoutData>
@@ -30,41 +40,33 @@
                                     priority="NeverOverflow"/>
                             </layoutData>
                         </SearchField>
-                        <OverflowToolbarButton text="Sort"
-                            tooltip="Sort"
+                        <OverflowToolbarButton text="{i18n>sort}"
                             icon="sap-icon://sort"
-                            type="Transparent"
                             press="onSort">
                             <layoutData>
                                 <OverflowToolbarLayoutData group="1" />
                             </layoutData>
                         </OverflowToolbarButton>
-                        <OverflowToolbarButton text="Upload"
-                            tooltip="Upload"
+                        <OverflowToolbarButton text="{i18n>upload}"
                             icon="sap-icon://upload"
-                            type="Transparent"
-                            visible="{view>/editMode}"
-                            press="onUpload">
+                            press="onUpload"
+                            visible="{view>/action/upload}">
                             <layoutData>
                                 <OverflowToolbarLayoutData group="1" />
                             </layoutData>
                         </OverflowToolbarButton>
-                        <OverflowToolbarButton text="Display"
-                            tooltip="Display"
+                        <OverflowToolbarButton text="{i18n>display}"
                             icon="sap-icon://display"
-                            type="Transparent"
-                            visible="{view>/editMode}"
-                            press="onDisplay">
+                            press="onDisplay"
+                            visible="{view>/action/display}">
                             <layoutData>
                                 <OverflowToolbarLayoutData group="1" />
                             </layoutData>
                         </OverflowToolbarButton>
-                        <OverflowToolbarButton text="Edit"
-                            tooltip="Edit"
+                        <OverflowToolbarButton text="{i18n>edit}"
                             icon="sap-icon://edit"
-                            type="Transparent"
-                            visible="{= !${view>/editMode}}"
-                            press="onEdit">
+                            press="onEdit"
+                            visible="{view>/action/edit}">
                             <layoutData>
                                 <OverflowToolbarLayoutData group="1" />
                             </layoutData>

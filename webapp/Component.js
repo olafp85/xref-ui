@@ -4,10 +4,10 @@
 
 sap.ui.define([
     "sap/ui/core/UIComponent",
-    "sap/ui/Device",
-    "xref/model/models"
+    "xref/model/Xrefs",
+    "xref/model/User"
 ],
-    function (UIComponent, Device, models) {
+    function (UIComponent, Xrefs, User) {
         "use strict";
 
         return UIComponent.extend("xref.Component", {
@@ -21,18 +21,21 @@ sap.ui.define([
              * @override
              */
             init: function () {
-                // call the base component's init function
+                // Call the base component's init function
                 UIComponent.prototype.init.apply(this, arguments);
 
-                // enable routing
+                // Enable routing
                 this.getRouter().initialize();
 
-                // set the device model
-                this.setModel(models.createDeviceModel(), "device");
+                // Create the User model
+                let URI = this.getManifestEntry("/sap.app/dataSources/user/uri");
+                this.UserModel = new User(URI);
+                this.setModel(this.UserModel, this.UserModel.ID);
 
-                // TODO 
-                const sXrefsUri = this.getManifestEntry("/sap.app/dataSources/mainService/uri");
-                console.log("URL from manifest", sXrefsUri);
+                // Create the Xrefs model and link it to the User model for access to the session token
+                URI = this.getManifestEntry("/sap.app/dataSources/xrefs/uri");
+                this.XrefsModel = new Xrefs(URI, this.UserModel);
+                this.setModel(this.XrefsModel, this.XrefsModel.ID);
             }
         });
     }

@@ -8,7 +8,8 @@ sap.ui.define([
     "sap/m/ListMode",
     "sap/m/ListType",
     "sap/m/MessageBox",
-    "sap/m/MessageToast"],
+    "sap/m/MessageToast"
+],
     /**
      * @param {typeof sap.ui.core.mvc.Controller} Controller
      */
@@ -16,23 +17,17 @@ sap.ui.define([
         "use strict";
 
         return Controller.extend("xref.controller.Home", {
-            loadData: function () {
-                this.byId("table").setBusyIndicatorDelay(0).setBusy(true);
-                this.getOwnerComponent().getModel("xrefs")
-                    .loadData("/apps/xref-api/xrefs")
-                    .finally(() => this.byId("table").setBusy(false))
-                    .catch(({ responseText }) => {
-                        MessageBox.error("Data loading failed", {
-                            details: responseText,
-                            initialFocus: MessageBox.Action.CLOSE  // Otherwise the "View Details" will be highlighted
-                        })
-                    });
-            },
-
             onInit: function () {
                 // Initialize the view model
-                this._oViewModel = new JSONModel({
-                    editMode: false,
+                this.viewModel = new JSONModel({
+                    version: this.getOwnerComponent().getManifestEntry("/sap.app/applicationVersion/version"),
+                    action: {
+                        login: true,
+                        logout: false,
+                        upload: false,
+                        display: false,
+                        edit: false
+                    },
                     table: {
                         count: 0,
                         mode: ListMode.None
@@ -41,147 +36,158 @@ sap.ui.define([
                         type: ListType.Navigation
                     }
                 })
-                this.getView().setModel(this._oViewModel, "view");
+                this.getView().setModel(this.viewModel, "view");
 
                 // Initialize the xrefs model
-                this.loadData();
+                this.Xrefs = this.getOwnerComponent().XrefsModel;
+                this.byId("table").setBusy(true);
+                this.Xrefs.load()
+                    .finally(() => this.byId("table").setBusy(false))
+                    .catch(({ message }) => MessageBox.error(message));
 
-                // Keep a reference to the sort dialog 
-                this._oSortDialog = null;
+                // User model
+                this.User = this.getOwnerComponent().UserModel;
+
+                // Keep references to the dialogs 
+                this.loginDialog = null;
+                this.sortDialog = null;
             },
 
             onDisplay: function () {
-                this._oViewModel.setProperty("/editMode", false);
-                this._oViewModel.setProperty("/table/mode", ListMode.None);
-                this._oViewModel.setProperty("/columnListItem/type", ListType.Navigation);
+                this._editMode(false);
             },
 
             onEdit: function () {
-                this._oViewModel.setProperty("/editMode", true);
-                this._oViewModel.setProperty("/table/mode", ListMode.Delete);
-                this._oViewModel.setProperty("/columnListItem/type", ListType.Inactive);
+                this._editMode();
             },
 
-            onItemDelete: function (oEvent) {
-                const token = "6|Tq2Dgo3JhMQnxSUwOC5190UYCYV5BHX2FEfQs4Rh";
-                const id = oEvent.getParameter("listItem").getBindingContext("xrefs").getProperty("id");
+            onItemDelete: function (event) {
+                const id = event.getParameter("listItem").getBindingContext(this.Xrefs.ID).getProperty("id");
 
-                let options = {
-                    method: "DELETE",
-                    headers: {
-                        accept: "application/json",
-                        authorization: "Bearer " + token
-                    }
-                }
+                this.byId("table").setBusy(true);
+                this.Xrefs.delete(id)
+                    .finally(() => this.byId("table").setBusy(false))
+                    .then(() => MessageToast.show("Item was deleted successfully"))
+                    .catch(({ message }) => MessageBox.error(message));
+            },
 
-                fetch(`/apps/xref-api/xrefs/${id}`, options)
-                    .then(response => {
-                        if (response.ok) {
-                            MessageToast.show("Item was deleted successfully");
-                            this.loadData();
-                        } else {
-                            return response.json();
-                        }
+            onItemPress: function (event) {
+                const itemBinding = event.getSource().getBindingContext(this.Xrefs.ID);
+                console.log("onItemPress", itemBinding.getProperty("id"));
+            },
+
+            onLogin: async function () {
+                this.loginDialog = await Fragment.load({
+                    name: "xref.view.Login",
+                    controller: this
+                })
+                this.getView().addDependent(this.loginDialog);  // Pass on the model references
+
+                let credentials = new JSONModel({
+                    email: "olaf.pohlmann@gmail.com",  // TODO
+                    password: null
+                })
+                this.loginDialog.setModel(credentials);
+                this.loginDialog.open();
+            },
+
+            onLoginCancel: function () {
+                this.loginDialog.close();
+            },
+
+            onLoginConfirm: function () {
+                let credentials = this.loginDialog.getModel().getData();
+
+                this.loginDialog.setBusy(true);
+                this.User.login(credentials)
+                    .finally(() => this.loginDialog.setBusy(false))
+                    .then((user) => {
+                        MessageToast.show(`Welcome ${user.name}`)
+                        this.loginDialog.close();
+                        this.viewModel.setProperty("/action/login", false);
+                        this.viewModel.setProperty("/action/logout", true);
+                        this.viewModel.setProperty("/action/edit", true);
                     })
-                    .then(json => {
-                        // No json, than response was okay
-                        if (json) throw new Error(json.message);
+                    .catch(({ message }) => MessageBox.error(message));
+            },
+
+            onLogout: function () {
+                this.getView().setBusy(true);
+                this.User.logout()
+                    .finally(() => this.getView().setBusy(false))
+                    .then(() => {
+                        MessageToast.show("Successfully logged out")
+                        this.loginDialog.close();
+                        this._editMode(false);
+                        this.viewModel.setProperty("/action/login", true);
+                        this.viewModel.setProperty("/action/logout", false);
+                        this.viewModel.setProperty("/action/edit", false);
                     })
-                    .catch((error) => MessageBox.error(error.message));
+                    .catch(({ message }) => MessageBox.error(message));
             },
 
-            onItemPress: function (oEvent) {
-                const oItemBinding = oEvent.getSource().getBindingContext("xrefs");
-                console.log("onItemPress", oItemBinding.getProperty("id"));
-                let dev = this.getOwnerComponent().getModel("device").getData();
-                console.log("device", dev);
+            onSearch: function (event) {
+                const value = event.getSource().getValue();
+                const binding = this.byId("table").getBinding("items");
+                if (!value) return binding.filter(null);
 
-                this.getOwnerComponent().getModel("xrefs").loadData("/apps/xref-api/xrefs/search/abap")
-            },
-
-            onSearch: function (oEvent) {
-                const sValue = oEvent.getSource().getValue();
-                const oBinding = this.byId("table").getBinding("items");
-
-                if (!sValue) {
-                    oBinding.filter(null);
-                    return;
-                }
-
-                // Composite filter
-                oBinding.filter(new Filter({
+                binding.filter(new Filter({
                     filters: [
-                        new Filter("type", FilterOperator.Contains, sValue),
-                        new Filter("name", FilterOperator.Contains, sValue),
-                        new Filter("system", FilterOperator.Contains, sValue)
+                        new Filter("type", FilterOperator.Contains, value),
+                        new Filter("name", FilterOperator.Contains, value),
+                        new Filter("system", FilterOperator.Contains, value)
                     ],
                     and: false
                 }));
             },
 
             onSort: async function () {
-                if (!this._oSortDialog) {
-                    this._oSortDialog = await Fragment.load({
-                        id: this.getView().getId(),
+                if (!this.sortDialog) {
+                    this.sortDialog = await Fragment.load({
                         name: "xref.view.Sort",
                         controller: this
                     })
-
-                    // Pass on the model references
-                    this.getView().addDependent(this._oSortDialog);
+                    this.getView().addDependent(this.sortDialog);
                 }
-
-                this._oSortDialog.open();
+                this.sortDialog.open();
             },
 
-            onSortConfirm: function (oEvent) {
-                const { sortItem, sortDescending } = oEvent.getParameters();
-                let aSorters = [new Sorter(sortItem.getKey(), sortDescending)];
+            onSortConfirm: function (event) {
+                const { sortItem, sortDescending } = event.getParameters();
+                let sorters = [new Sorter(sortItem.getKey(), sortDescending)];
 
                 // Secundairy sort by name
                 if (sortItem.getKey() !== "name") {
-                    aSorters.push(new Sorter("name", sortDescending))
+                    sorters.push(new Sorter("name", sortDescending))
                 }
 
-                this.byId("table").getBinding("items").sort(aSorters);
+                this.byId("table").getBinding("items").sort(sorters);
             },
 
-            onUpdateFinished: function (oEvent) {
+            onUpdateFinished: function (event) {
                 // Fires after items binding is updated 
-                this._oViewModel.setProperty("/table/count", oEvent.getParameter("total"));
+                this.viewModel.setProperty("/table/count", event.getParameter("total"));
             },
 
             onUpload: function () {
-                const token = "6|Tq2Dgo3JhMQnxSUwOC5190UYCYV5BHX2FEfQs4Rh";
                 let body = {
                     "type": "TEST",
-                    "name": "Fetch"
+                    "name": "Promise"
                 };
 
-                let options = {
-                    method: "POST",
-                    headers: {
-                        "content-type": "application/json",
-                        accept: "application/json",
-                        authorization: "Bearer " + token
-                    },
-                    body: JSON.stringify(body)
-                }
+                this.byId("table").setBusy(true);
+                this.Xrefs.create(body)
+                    .finally(() => this.byId("table").setBusy(false))
+                    .then(() => MessageToast.show("File was uploaded successfully"))
+                    .catch(({ message }) => MessageBox.error(message));
+            },
 
-                fetch("/apps/xref-api/xrefs", options)
-                    .then(response => {
-                        if (response.ok) {
-                            MessageToast.show("File was uploaded successfully");
-                            this.loadData();
-                        } else {
-                            return response.json();
-                        }
-                    })
-                    .then(json => {
-                        // No json, than response was okay
-                        if (json) throw new Error(json.message);
-                    })
-                    .catch((error) => MessageBox.error(error.message));
+            _editMode: function (on = true) {
+                this.viewModel.setProperty("/action/upload", on);
+                this.viewModel.setProperty("/action/display", on);
+                this.viewModel.setProperty("/action/edit", !on);
+                this.viewModel.setProperty("/table/mode", (on) ? ListMode.Delete : ListMode.None);
+                this.viewModel.setProperty("/columnListItem/type", (on) ? ListType.Inactive : ListType.Navigation);
             }
         });
     });

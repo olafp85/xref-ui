@@ -1,0 +1,25 @@
+<core:FragmentDefinition xmlns="sap.m"
+    xmlns:core="sap.ui.core">
+    <Dialog title="Enter your credentials"
+        class="sapUiResponsivePadding--content">
+        <content>
+            <core:Icon src="sap-icon://customer"
+                size="3rem"
+                class="sapUiSmallMargin"></core:Icon >
+            <Input value="{/email}"
+                placeholder="E-mail" />
+            <Input value="{/password}"
+                type="Password"
+                placeholder="Password" />
+        </content>
+        <buttons>
+            <Button text="OK"
+                type="Emphasized"
+                press="onLoginConfirm">
+            </Button>
+            <Button text="Cancel"
+                press="onLoginCancel">
+            </Button>
+        </buttons>
+    </Dialog>
+</core:FragmentDefinition>
