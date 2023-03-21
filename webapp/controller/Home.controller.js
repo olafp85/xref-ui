@@ -62,13 +62,23 @@ sap.ui.define([
             },
 
             onItemDelete: function (event) {
-                const id = event.getParameter("listItem").getBindingContext(this.Xrefs.ID).getProperty("id");
+                const { id, type, name } = event.getParameter("listItem").getBindingContext(this.Xrefs.ID).getObject();
+                const text = `Delete item "${type.toLowerCase()} ${name}"?`
 
-                this.byId("table").setBusy(true);
-                this.Xrefs.delete(id)
-                    .finally(() => this.byId("table").setBusy(false))
-                    .then(() => MessageToast.show("Item was deleted successfully"))
-                    .catch(({ message }) => MessageBox.error(message));
+                MessageBox.confirm(text, {
+                    icon: MessageBox.Icon.WARNING,
+                    title: "Delete",
+                    actions: [MessageBox.Action.DELETE, MessageBox.Action.CANCEL],
+                    emphasizedAction: MessageBox.Action.DELETE,
+                    onClose: (action) => {
+                        if (action !== MessageBox.Action.DELETE) return;
+                        this.byId("table").setBusy(true);
+                        this.Xrefs.delete(id)
+                            .finally(() => this.byId("table").setBusy(false))
+                            .then(() => MessageToast.show("Item was deleted successfully"))
+                            .catch(({ message }) => MessageBox.error(message));
+                    }
+                })
             },
 
             onItemPress: function (event) {
