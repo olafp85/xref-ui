@@ -54,11 +54,11 @@ sap.ui.define([
             },
 
             onDisplay: function () {
-                this._editMode(false);
+                this.editMode(false);
             },
 
             onEdit: function () {
-                this._editMode();
+                this.editMode();
             },
 
             onItemDelete: function (event) {
@@ -84,6 +84,7 @@ sap.ui.define([
             onItemPress: function (event) {
                 const itemBinding = event.getSource().getBindingContext(this.Xrefs.ID);
                 console.log("onItemPress", itemBinding.getProperty("id"));
+                console.log(sap.m.MessageBox.Action);
             },
 
             onLogin: async function () {
@@ -95,7 +96,8 @@ sap.ui.define([
 
                 let credentials = new JSONModel({
                     email: "olaf.pohlmann@gmail.com",  // TODO
-                    password: null
+                    password: null,
+                    proceed: false
                 })
                 this.loginDialog.setModel(credentials);
                 this.loginDialog.open();
@@ -105,20 +107,37 @@ sap.ui.define([
                 this.loginDialog.close();
             },
 
-            onLoginConfirm: function () {
+            onLoginCheckInput: function (event) {
+                let { email, password } = this.loginDialog.getModel().getData();
+
+                // Current screen value (model isn't updated yet)
+                if (event.getSource().getProperty("type") === sap.m.InputType.Password) {
+                    password = event.getParameter("value");
+                } else {
+                    email = event.getParameter("value");
+                }
+                this.loginDialog.getModel().setProperty("/proceed", !!email && !!password);
+            },
+
+            onLoginConfirm: async function () {
                 let credentials = this.loginDialog.getModel().getData();
 
-                this.loginDialog.setBusy(true);
-                this.User.login(credentials)
-                    .finally(() => this.loginDialog.setBusy(false))
-                    .then((user) => {
+                try {
+                    let response = await this.User.login(credentials);
+                    if (response.ok) {
                         MessageToast.show(`Welcome ${user.name}`)
                         this.loginDialog.close();
                         this.viewModel.setProperty("/action/login", false);
                         this.viewModel.setProperty("/action/logout", true);
                         this.viewModel.setProperty("/action/edit", true);
-                    })
-                    .catch(({ message }) => MessageBox.error(message));
+                    } else {
+                        MessageToast.show("Bad credentials");
+                    }
+
+                } catch ({ message }) {
+                    MessageBox.error(message);
+                }
+                this.loginDialog.setBusy(false);
             },
 
             onLogout: function () {
@@ -126,12 +145,11 @@ sap.ui.define([
                 this.User.logout()
                     .finally(() => this.getView().setBusy(false))
                     .then(() => {
-                        MessageToast.show("Successfully logged out")
-                        this.loginDialog.close();
-                        this._editMode(false);
+                        this.editMode(false);
                         this.viewModel.setProperty("/action/login", true);
                         this.viewModel.setProperty("/action/logout", false);
                         this.viewModel.setProperty("/action/edit", false);
+                        MessageToast.show("Successfully signed out")
                     })
                     .catch(({ message }) => MessageBox.error(message));
             },
@@ -192,7 +210,7 @@ sap.ui.define([
                     .catch(({ message }) => MessageBox.error(message));
             },
 
-            _editMode: function (on = true) {
+            editMode: function (on = true) {
                 this.viewModel.setProperty("/action/upload", on);
                 this.viewModel.setProperty("/action/display", on);
                 this.viewModel.setProperty("/action/edit", !on);
