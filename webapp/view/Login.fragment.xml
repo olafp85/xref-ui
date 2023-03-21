@@ -8,10 +8,10 @@
                     size="3rem"
                     class="sapUiSmallMargin"></core:Icon >
             </HBox>
-            <Input value="{/email}"
+            <Input value="{/credentials/email}"
                 liveChange="onLoginCheckInput"
                 placeholder="E-mail"/>
-            <Input value="{/password}"
+            <Input value="{/credentials/password}"
                 type="Password"
                 liveChange="onLoginCheckInput"
                 placeholder="Password" />

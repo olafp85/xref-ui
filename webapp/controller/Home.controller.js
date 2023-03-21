@@ -94,12 +94,14 @@ sap.ui.define([
                 })
                 this.getView().addDependent(this.loginDialog);  // Pass on the model references
 
-                let credentials = new JSONModel({
-                    email: "olaf.pohlmann@gmail.com",  // TODO
-                    password: null,
+                let viewModel = new JSONModel({
+                    credentials: {
+                        email: "olaf.pohlmann@gmail.com",  // TODO
+                        password: null
+                    },
                     proceed: false
-                })
-                this.loginDialog.setModel(credentials);
+                });
+                this.loginDialog.setModel(viewModel);
                 this.loginDialog.open();
             },
 
@@ -108,7 +110,7 @@ sap.ui.define([
             },
 
             onLoginCheckInput: function (event) {
-                let { email, password } = this.loginDialog.getModel().getData();
+                let { credentials: { email, password } } = this.loginDialog.getModel().getData();
 
                 // Current screen value (model isn't updated yet)
                 if (event.getSource().getProperty("type") === sap.m.InputType.Password) {
@@ -120,24 +122,19 @@ sap.ui.define([
             },
 
             onLoginConfirm: async function () {
-                let credentials = this.loginDialog.getModel().getData();
+                let { credentials } = this.loginDialog.getModel().getData();
 
-                try {
-                    let response = await this.User.login(credentials);
-                    if (response.ok) {
+                this.loginDialog.setBusy(true);
+                this.User.login(credentials)
+                    .finally(() => this.loginDialog.setBusy(false))
+                    .then((user) => {
                         MessageToast.show(`Welcome ${user.name}`)
                         this.loginDialog.close();
                         this.viewModel.setProperty("/action/login", false);
                         this.viewModel.setProperty("/action/logout", true);
                         this.viewModel.setProperty("/action/edit", true);
-                    } else {
-                        MessageToast.show("Bad credentials");
-                    }
-
-                } catch ({ message }) {
-                    MessageBox.error(message);
-                }
-                this.loginDialog.setBusy(false);
+                    })
+                    .catch(({ message }) => MessageBox.error(message));
             },
 
             onLogout: function () {

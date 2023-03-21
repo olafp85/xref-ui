@@ -30,6 +30,8 @@ sap.ui.define([
                     this.setData(result.user);
                     this.token = result.token;
                     return (result.user);
+                } else if (response.status == 401) { // Unauthorized 
+                    throw new Error("Incorrect credentials");
                 } else {
                     throw new Error(result.message);
                 }
