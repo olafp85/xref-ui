@@ -12,7 +12,9 @@ sap.ui.define([
 
         return UIComponent.extend("xref.Component", {
             metadata: {
-                manifest: "json"
+                interfaces: [
+                    "sap.ui.core.IAsyncContentCreation"
+                ], manifest: "json"
             },
 
             /**

@@ -1,10 +1,10 @@
 sap.ui.define([
     "sap/ui/core/mvc/Controller",
-    "sap/ui/core/Fragment",
     "sap/ui/model/Filter",
     "sap/ui/model/FilterOperator",
     "sap/ui/model/Sorter",
     "sap/ui/model/json/JSONModel",
+    "sap/m/InputType",
     "sap/m/ListMode",
     "sap/m/ListType",
     "sap/m/MessageBox",
@@ -13,7 +13,7 @@ sap.ui.define([
     /**
      * @param {typeof sap.ui.core.mvc.Controller} Controller
      */
-    function (Controller, Fragment, Filter, FilterOperator, Sorter, JSONModel, ListMode, ListType, MessageBox, MessageToast) {
+    function (Controller, Filter, FilterOperator, Sorter, JSONModel, InputType, ListMode, ListType, MessageBox, MessageToast) {
         "use strict";
 
         return Controller.extend("xref.controller.Home", {
@@ -54,11 +54,11 @@ sap.ui.define([
             },
 
             onDisplay: function () {
-                this.editMode(false);
+                this._setEditMode(false);
             },
 
             onEdit: function () {
-                this.editMode();
+                this._setEditMode();
             },
 
             onItemDelete: function (event) {
@@ -84,36 +84,38 @@ sap.ui.define([
             onItemPress: function (event) {
                 const itemBinding = event.getSource().getBindingContext(this.Xrefs.ID);
                 console.log("onItemPress", itemBinding.getProperty("id"));
-                console.log(sap.m.MessageBox.Action);
             },
 
-            onLogin: async function () {
-                this.loginDialog = await Fragment.load({
-                    name: "xref.view.Login",
-                    controller: this
-                })
-                this.getView().addDependent(this.loginDialog);  // Pass on the model references
+            onLogin: function () {
+                if (this.loginDialog) {
+                    return this.loginDialog.open();
+                }
 
                 let viewModel = new JSONModel({
                     credentials: {
-                        email: "olaf.pohlmann@gmail.com",  // TODO
+                        email: null,
                         password: null
                     },
                     proceed: false
                 });
-                this.loginDialog.setModel(viewModel);
-                this.loginDialog.open();
+
+                this.loadFragment({ name: "xref.view.Login" })
+                    .then(fragment => {
+                        fragment.setModel(viewModel).open();
+                        this.loginDialog = fragment;
+                    });
             },
 
             onLoginCancel: function () {
                 this.loginDialog.close();
+                this.loginDialog.getModel().setProperty("/credentials/password", null);
             },
 
             onLoginCheckInput: function (event) {
                 let { credentials: { email, password } } = this.loginDialog.getModel().getData();
 
                 // Current screen value (model isn't updated yet)
-                if (event.getSource().getProperty("type") === sap.m.InputType.Password) {
+                if (event.getSource().getProperty("type") === InputType.Password) {
                     password = event.getParameter("value");
                 } else {
                     email = event.getParameter("value");
@@ -121,18 +123,25 @@ sap.ui.define([
                 this.loginDialog.getModel().setProperty("/proceed", !!email && !!password);
             },
 
-            onLoginConfirm: async function () {
+            onLoginConfirm: function () {
                 let { credentials } = this.loginDialog.getModel().getData();
 
                 this.loginDialog.setBusy(true);
                 this.User.login(credentials)
-                    .finally(() => this.loginDialog.setBusy(false))
-                    .then((user) => {
-                        MessageToast.show(`Welcome ${user.name}`)
-                        this.loginDialog.close();
-                        this.viewModel.setProperty("/action/login", false);
-                        this.viewModel.setProperty("/action/logout", true);
-                        this.viewModel.setProperty("/action/edit", true);
+                    .finally(() => {
+                        this.loginDialog.setBusy(false);
+                        this.loginDialog.getModel().setProperty("/credentials/password", null);
+                    })
+                    .then(ok => {
+                        if (ok) {
+                            MessageToast.show(`Welcome ${this.User.getProperty("/name")}`);
+                            this.loginDialog.close();
+                            this.viewModel.setProperty("/action/login", false);
+                            this.viewModel.setProperty("/action/logout", true);
+                            this.viewModel.setProperty("/action/edit", true);
+                        } else {
+                            MessageBox.error("Incorrect credentials");
+                        }
                     })
                     .catch(({ message }) => MessageBox.error(message));
             },
@@ -142,7 +151,7 @@ sap.ui.define([
                 this.User.logout()
                     .finally(() => this.getView().setBusy(false))
                     .then(() => {
-                        this.editMode(false);
+                        this._setEditMode(false);
                         this.viewModel.setProperty("/action/login", true);
                         this.viewModel.setProperty("/action/logout", false);
                         this.viewModel.setProperty("/action/edit", false);
@@ -167,14 +176,15 @@ sap.ui.define([
             },
 
             onSort: async function () {
-                if (!this.sortDialog) {
-                    this.sortDialog = await Fragment.load({
-                        name: "xref.view.Sort",
-                        controller: this
-                    })
-                    this.getView().addDependent(this.sortDialog);
+                if (this.sortDialog) {
+                    return this.sortDialog.open();
                 }
-                this.sortDialog.open();
+
+                this.loadFragment({ name: "xref.view.Sort" })
+                    .then(fragment => {
+                        fragment.open();
+                        this.sortDialog = fragment;
+                    });
             },
 
             onSortConfirm: function (event) {
@@ -207,7 +217,7 @@ sap.ui.define([
                     .catch(({ message }) => MessageBox.error(message));
             },
 
-            editMode: function (on = true) {
+            _setEditMode: function (on = true) {
                 this.viewModel.setProperty("/action/upload", on);
                 this.viewModel.setProperty("/action/display", on);
                 this.viewModel.setProperty("/action/edit", !on);

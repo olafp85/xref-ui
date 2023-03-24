@@ -25,15 +25,21 @@ sap.ui.define([
                 }
 
                 let response = await fetch(this.URI + "/login", options);
+                const contentType = response.headers.get("content-type");
+                if (!contentType || !contentType.includes("application/json")) {
+                    throw new Error("Unexpected response");
+                }
+
                 let result = await response.json();
-                if (response.ok) {
-                    this.setData(result.user);
-                    this.token = result.token;
-                    return (result.user);
-                } else if (response.status == 401) { // Unauthorized 
-                    throw new Error("Incorrect credentials");
-                } else {
-                    throw new Error(result.message);
+                switch (response.status) {
+                    case 201:
+                        this.setData(result.user);
+                        this.token = result.token;
+                        return true;
+                    case 401:  // Unauthorized
+                        return false;
+                    default:
+                        throw new Error(result.message)
                 }
             },
 
