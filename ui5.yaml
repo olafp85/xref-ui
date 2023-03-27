@@ -14,7 +14,7 @@ server:
           path:
             - /resources
             - /test-resources
-          url: https://ui5.sap.com
+          url: https://ui5.sap.com/1.108
         backend:
          - path: /apps/xref-api
            url: https://luukpohlmann.nl
