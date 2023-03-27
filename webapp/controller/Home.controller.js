@@ -1,5 +1,5 @@
 sap.ui.define([
-    "sap/ui/core/mvc/Controller",
+    "xref/controller/BaseController",
     "sap/ui/model/Filter",
     "sap/ui/model/FilterOperator",
     "sap/ui/model/Sorter",
@@ -13,14 +13,15 @@ sap.ui.define([
     /**
      * @param {typeof sap.ui.core.mvc.Controller} Controller
      */
-    function (Controller, Filter, FilterOperator, Sorter, JSONModel, InputType, ListMode, ListType, MessageBox, MessageToast) {
+    function (BaseController, Filter, FilterOperator, Sorter, JSONModel, InputType, ListMode, ListType, MessageBox, MessageToast) {
         "use strict";
 
-        return Controller.extend("xref.controller.Home", {
+        return BaseController.extend("xref.controller.Home", {
             onInit: function () {
                 // Initialize the view model
                 this.viewModel = new JSONModel({
                     version: this.getOwnerComponent().getManifestEntry("/sap.app/applicationVersion/version"),
+                    ui5Version: sap.ui.getCore().getConfiguration().getVersion().toString(),
                     action: {
                         login: true,
                         logout: false,
@@ -83,7 +84,8 @@ sap.ui.define([
 
             onItemPress: function (event) {
                 const itemBinding = event.getSource().getBindingContext(this.Xrefs.ID);
-                console.log("onItemPress", itemBinding.getProperty("id"));
+                const id = itemBinding.getProperty("id");
+                this.getRouter().navTo("Details", { id });
             },
 
             onLogin: function () {

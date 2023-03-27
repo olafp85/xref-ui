@@ -1,12 +1,10 @@
-<mvc:View xmlns:calendar="sap.ui.unified.calendar"
-    controllerName="xref.controller.Home"
+<mvc:View controllerName="xref.controller.Home"
     xmlns:mvc="sap.ui.core.mvc"
-    xmlns:layout="sap.ui.layout"
     xmlns="sap.m">
     <Page title="{i18n>title}"
         class="sapUiContentPadding sapUiResponsivePadding--header">
         <headerContent>
-            <Text text="{view>/version}"></Text>
+            <Text text="{view>/version} ({view>/ui5Version})"></Text>
             <Button text="{i18n>login}"
                 press="onLogin"
                 visible="{view>/action/login}"></Button>

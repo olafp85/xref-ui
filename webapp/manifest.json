@@ -5,7 +5,7 @@
         "type": "application",
         "i18n": "i18n/i18n.properties",
         "applicationVersion": {
-            "version": "0.0.6"
+            "version": "0.0.7"
         },
         "title": "{{appTitle}}",
         "description": "{{appDescription}}",
@@ -78,24 +78,39 @@
                 "viewPath": "xref.view",
                 "controlAggregation": "pages",
                 "controlId": "app",
-                "clearControlAggregation": false
+                "clearControlAggregation": false,
+                "transition": "slide",
+                "bypassed": {
+                    "target": "notFound"
+                }
             },
             "routes": [
                 {
-                    "name": "RouteHome",
-                    "pattern": ":?query:",
+                    "name": "Home",
+                    "pattern": "",
                     "target": [
-                        "TargetHome"
+                        "home"
+                    ]
+                },
+                {
+                    "name": "Details",
+                    "pattern": "{id}",
+                    "target": [
+                        "details"
                     ]
                 }
             ],
             "targets": {
-                "TargetHome": {
-                    "viewType": "XML",
-                    "transition": "slide",
-                    "clearControlAggregation": false,
-                    "viewId": "Home",
-                    "viewName": "Home"
+                "home": {
+                    "viewName": "Home",
+                    "viewLevel": 1
+                },
+                "details": {
+                    "viewName": "Details",
+                    "viewLevel": 2
+                },
+                "notFound": {
+                    "viewName": "NotFound"
                 }
             }
         },

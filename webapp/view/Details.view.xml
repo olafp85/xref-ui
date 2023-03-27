@@ -1,0 +1,9 @@
+<mvc:View controllerName="xref.controller.Details"
+    xmlns="sap.m"
+    xmlns:mvc="sap.ui.core.mvc">
+    <MessagePage title="Details"
+        text="{view>/id}"
+        description="more to come"
+        showNavButton="true"
+        navButtonPress="onNavBack"/>
+</mvc:View>

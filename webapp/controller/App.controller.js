@@ -1,14 +1,13 @@
 sap.ui.define(
-    [
-        "sap/ui/core/mvc/Controller"
-    ],
-    function(BaseController) {
-      "use strict";
-  
-      return BaseController.extend("xref.controller.App", {
-        onInit() {
-        }
-      });
-    }
-  );
-  
+  [
+    "xref/controller/BaseController"
+  ],
+  function (BaseController) {
+    "use strict";
+
+    return BaseController.extend("xref.controller.App", {
+      onInit() {
+      }
+    });
+  }
+);
