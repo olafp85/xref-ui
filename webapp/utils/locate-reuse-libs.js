@@ -1,3 +1,7 @@
+/* 
+Disabled calling this file from index.html because of 404 errors to unsupported resource bundles (fallback chain from manifest is ignored)
+*/
+
 /*eslint-disable semi, no-console*/
 (function (sap) {
     var getKeys = function (libOrComp, libOrCompKeysString) {

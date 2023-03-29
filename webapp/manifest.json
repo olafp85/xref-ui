@@ -3,13 +3,18 @@
     "sap.app": {
         "id": "xref",
         "type": "application",
-        "i18n": "i18n/i18n.properties",
+        "i18n": {
+            "bundleUrl": "i18n/i18n.properties",
+            "supportedLocales": [
+                "en",
+                "nl"
+            ]
+        },
         "applicationVersion": {
-            "version": "0.0.7"
+            "version": "0.0.9"
         },
         "title": "{{appTitle}}",
         "description": "{{appDescription}}",
-        "resources": "resources.json",
         "sourceTemplate": {
             "id": "@sap/generator-fiori:basic",
             "version": "1.8.4",
@@ -59,7 +64,33 @@
             "i18n": {
                 "type": "sap.ui.model.resource.ResourceModel",
                 "settings": {
-                    "bundleName": "xref.i18n.i18n"
+                    "bundleUrl": "i18n/i18n.properties",
+                    "supportedLocales": [
+                        "en",
+                        "nl"
+                    ],
+                    "async": true
+                }
+            },
+            "i18n_sap_ui_core": {
+                "type": "sap.ui.model.resource.ResourceModel",
+                "settings": {
+                    "bundleUrl": "/resources/sap/ui/core/messagebundle.properties",
+                    "async": true
+                }
+            },
+            "i18n_sap_ui_comp": {
+                "type": "sap.ui.model.resource.ResourceModel",
+                "settings": {
+                    "bundleUrl": "/resources/sap/ui/comp/messagebundle.properties",
+                    "async": true
+                }
+            },
+            "i18n_sap_m": {
+                "type": "sap.ui.model.resource.ResourceModel",
+                "settings": {
+                    "bundleUrl": "/resources/sap/m/messagebundle.properties",
+                    "async": true
                 }
             }
         },

@@ -18,10 +18,13 @@ sap.ui.define([
 
         return BaseController.extend("xref.controller.Home", {
             onInit: function () {
+                // App title 
+                this.getOwnerComponent().getModel("i18n").getResourceBundle()
+                    .then(bundle => document.title = bundle.getText("appTitle"));
+
                 // Initialize the view model
                 this.viewModel = new JSONModel({
                     version: this.getOwnerComponent().getManifestEntry("/sap.app/applicationVersion/version"),
-                    ui5Version: sap.ui.getCore().getConfiguration().getVersion().toString(),
                     action: {
                         login: true,
                         logout: false,
@@ -177,7 +180,7 @@ sap.ui.define([
                 }));
             },
 
-            onSort: async function () {
+            onSort: function () {
                 if (this.sortDialog) {
                     return this.sortDialog.open();
                 }

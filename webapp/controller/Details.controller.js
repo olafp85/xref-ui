@@ -15,6 +15,16 @@ sap.ui.define([
                 id
             });
             this.getView().setModel(viewModel, "view");
+
+            sap.ui.require([
+                "sap/ui/VersionInfo",
+                "sap/base/util/Version"
+            ], function (VersionInfo, VersionUtil) {
+                VersionInfo.load().then(function (oCurrentVersionInfo) {
+                    var oVersionUtil = new VersionUtil(oCurrentVersionInfo.version);
+                    console.log('version', oCurrentVersionInfo.version);
+                });
+            });
         }
     });
 });

@@ -55,8 +55,9 @@ sap.ui.define([
                     let responseJson;
                     try {
                         responseJson = JSON.parse(responseText);
+                        throw new Error(responseJson.message);
                     } catch (e) { }
-                    throw new Error(responseJson?.message ?? responseText ?? statusText);
+                    throw new Error(responseText ?? statusText);
                 }
             }
         });
