@@ -1,6 +1,8 @@
 <core:FragmentDefinition xmlns="sap.m"
     xmlns:core="sap.ui.core">
+
     <ViewSettingsDialog confirm="onSortConfirm">
+
         <sortItems>
             <ViewSettingsItem text="{i18n>type}"
                 key="type" />
@@ -12,5 +14,7 @@
             <ViewSettingsItem text="{i18n>date}"
                 key="date" />
         </sortItems>
+
     </ViewSettingsDialog>
+
 </core:FragmentDefinition>

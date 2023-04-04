@@ -22,9 +22,20 @@ sap.ui.define([
                 this.getOwnerComponent().getModel("i18n").getResourceBundle()
                     .then(bundle => document.title = bundle.getText("appTitle"));
 
+                // Initialize the xrefs model
+                this.Xrefs = this.getOwnerComponent().XrefsModel;
+                this.Xrefs.attachRequestSent(() => this.byId("table").setBusy(true));
+                this.Xrefs.attachRequestCompleted(() => this.byId("table").setBusy(false));
+                this.Xrefs.load().catch(({ message }) => MessageBox.error(message));
+
+                // User model
+                this.User = this.getOwnerComponent().UserModel;
+
                 // Initialize the view model
                 this.viewModel = new JSONModel({
                     version: this.getOwnerComponent().getManifestEntry("/sap.app/applicationVersion/version"),
+                    uploadUrl: this.Xrefs.URI,
+                    authorization: null,
                     action: {
                         login: true,
                         logout: false,
@@ -41,16 +52,6 @@ sap.ui.define([
                     }
                 });
                 this.getView().setModel(this.viewModel, "view");
-
-                // Initialize the xrefs model
-                this.Xrefs = this.getOwnerComponent().XrefsModel;
-                this.byId("table").setBusy(true);
-                this.Xrefs.load()
-                    .finally(() => this.byId("table").setBusy(false))
-                    .catch(({ message }) => MessageBox.error(message));
-
-                // User model
-                this.User = this.getOwnerComponent().UserModel;
 
                 // Keep references to the dialogs
                 this.loginDialog = null;
@@ -77,9 +78,7 @@ sap.ui.define([
                     emphasizedAction: MessageBox.Action.DELETE,
                     onClose: (action) => {
                         if (action !== MessageBox.Action.DELETE) return;
-                        this.byId("table").setBusy(true);
                         this.Xrefs.delete(id)
-                            .finally(() => this.byId("table").setBusy(false))
                             .then(() => MessageToast.show("Item was deleted successfully"))
                             .catch(({ message }) => MessageBox.error(message));
                     }
@@ -145,6 +144,7 @@ sap.ui.define([
                             this.loginDialog.close();
                             this.viewModel.setProperty("/action/login", false);
                             this.viewModel.setProperty("/action/logout", true);
+                            this.viewModel.setProperty("/action/upload", true);
                             this.viewModel.setProperty("/action/edit", true);
                         } else {
                             MessageBox.error("Incorrect credentials");
@@ -161,6 +161,7 @@ sap.ui.define([
                         this._setEditMode(false);
                         this.viewModel.setProperty("/action/login", true);
                         this.viewModel.setProperty("/action/logout", false);
+                        this.viewModel.setProperty("/action/upload", false);
                         this.viewModel.setProperty("/action/edit", false);
                         MessageToast.show("Successfully signed out")
                     })
@@ -211,17 +212,20 @@ sap.ui.define([
                 this.viewModel.setProperty("/table/count", event.getParameter("total"));
             },
 
-            onUpload: function () {
-                let body = {
-                    "type": "TEST",
-                    "name": "Promise"
-                };
+            onUpload: function (event) {
+                this.viewModel.setProperty("/authorization", "Bearer " + this.User.token);
+                let button = event.getSource();
+                this.byId("uploadDialog").openBy(button);
+            },
 
-                this.byId("table").setBusy(true);
-                this.Xrefs.create(body)
-                    .finally(() => this.byId("table").setBusy(false))
-                    .then(() => MessageToast.show("File was uploaded successfully"))
-                    .catch(({ message }) => MessageBox.error(message));
+            onUploadCompleted: function (event) {
+                let { status, response } = event.getParameters();
+                if (status === 201) {
+                    MessageToast.show("Upload Completed");
+                    this.Xrefs.load();
+                } else {
+                    MessageBox.error("Upload failed", { details: response });
+                }
             },
 
             onUser: function (event) {
@@ -230,7 +234,6 @@ sap.ui.define([
             },
 
             _setEditMode: function (on = true) {
-                this.viewModel.setProperty("/action/upload", on);
                 this.viewModel.setProperty("/action/display", on);
                 this.viewModel.setProperty("/action/edit", !on);
                 this.viewModel.setProperty("/table/mode", (on) ? ListMode.Delete : ListMode.None);

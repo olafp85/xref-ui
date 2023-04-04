@@ -23,5 +23,7 @@
                 </items>
             </List>
         </content>
+
     </ResponsivePopover>
+
 </core:FragmentDefinition>

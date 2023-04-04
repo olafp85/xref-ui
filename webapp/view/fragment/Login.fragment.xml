@@ -1,7 +1,9 @@
 <core:FragmentDefinition xmlns="sap.m"
     xmlns:core="sap.ui.core">
+
     <Dialog showHeader="false"
         class="sapUiResponsivePadding--content">
+
         <content>
             <HBox justifyContent="Center">
                 <core:Icon src="sap-icon://customer"
@@ -16,6 +18,7 @@
                 liveChange="onLoginCheckInput"
                 placeholder="Password" />
         </content>
+
         <buttons>
             <Button text="{i18n>login}"
                 type="Emphasized"
@@ -26,5 +29,7 @@
                 press="onLoginCancel">
             </Button>
         </buttons>
+
     </Dialog>
+
 </core:FragmentDefinition>

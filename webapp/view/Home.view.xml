@@ -2,11 +2,11 @@
     xmlns:mvc="sap.ui.core.mvc"
     xmlns:core="sap.ui.core"
     xmlns="sap.m"
-    xmlns:upload="sap.m.upload"
     core:require="{ formatMessage: 'sap/base/strings/formatMessage' }">
 
     <Page title="{i18n>appTitle}"
         class="sapUiContentPadding sapUiResponsivePadding--header">
+
         <headerContent>
             <Text text="{view>/version}"></Text>
             <Button text="{i18n>login}"
@@ -36,7 +36,8 @@
                 hiddenInPopin="Low"
                 mode="{view>/table/mode}"
                 delete="onItemDelete"
-                updateFinished="onUpdateFinished">
+                updateFinished="onUpdateFinished"
+                busyIndicatorDelay="0">
 
                 <headerToolbar>
                     <OverflowToolbar>
@@ -48,7 +49,6 @@
                             formatter: 'formatMessage'
                         }"/>
                         <ToolbarSpacer/>
-
                         <SearchField liveChange="onSearch">
                             <layoutData>
                                 <OverflowToolbarLayoutData maxWidth="15rem"
@@ -67,6 +67,10 @@
                             text="{i18n-sap.ui.core>Icon.upload}"
                             press="onUpload"
                             visible="{view>/action/upload}">
+                            <dependents>
+                                <core:Fragment type="XML"
+                                    fragmentName="xref.view.fragment.Upload" />
+                            </dependents>
                             <layoutData>
                                 <OverflowToolbarLayoutData group="1" />
                             </layoutData>
@@ -126,7 +130,9 @@
                         </cells>
                     </ColumnListItem>
                 </items>
+
             </Table>
         </content>
+
     </Page>
 </mvc:View>
