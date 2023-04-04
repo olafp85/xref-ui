@@ -105,7 +105,7 @@ sap.ui.define([
                     proceed: false
                 });
 
-                this.loadFragment({ name: "xref.view.Login" })
+                this.loadFragment({ name: "xref.view.fragment.Login" })
                     .then(fragment => {
                         fragment.setModel(viewModel).open();
                         this.loginDialog = fragment;
@@ -187,7 +187,7 @@ sap.ui.define([
                     return this.sortDialog.open();
                 }
 
-                this.loadFragment({ name: "xref.view.Sort" })
+                this.loadFragment({ name: "xref.view.fragment.Sort" })
                     .then(fragment => {
                         fragment.open();
                         this.sortDialog = fragment;
