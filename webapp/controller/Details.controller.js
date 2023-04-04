@@ -1,7 +1,8 @@
 sap.ui.define([
     "xref/controller/BaseController",
-    "sap/ui/model/json/JSONModel"
-], function (BaseController, JSONModel) {
+    "sap/ui/model/json/JSONModel",
+    "sap/m/MessageBox"
+], function (BaseController, JSONModel, MessageBox) {
     "use strict";
 
     return BaseController.extend("xref.controller.Details", {
@@ -16,15 +17,16 @@ sap.ui.define([
             });
             this.getView().setModel(viewModel, "view");
 
-            sap.ui.require([
-                "sap/ui/VersionInfo",
-                "sap/base/util/Version"
-            ], function (VersionInfo, VersionUtil) {
-                VersionInfo.load().then(function (oCurrentVersionInfo) {
-                    var oVersionUtil = new VersionUtil(oCurrentVersionInfo.version);
-                    console.log('version', oCurrentVersionInfo.version);
-                });
-            });
+            // Initialize the xref model
+            this.Xref = this.getOwnerComponent().XrefModel;
+            return;
+            this.getView().setBusy(true);
+            this.Xrefs.load(id)
+                .finally(() => this.getView().setBusy(false))
+                .catch(({ message }) => MessageBox.error(message));
+
+
+
         }
     });
 });

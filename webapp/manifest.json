@@ -11,7 +11,7 @@
             ]
         },
         "applicationVersion": {
-            "version": "0.0.9"
+            "version": "0.0.12"
         },
         "title": "{{appTitle}}",
         "description": "{{appDescription}}",
@@ -69,27 +69,6 @@
                         "en",
                         "nl"
                     ],
-                    "async": true
-                }
-            },
-            "i18n_sap_ui_core": {
-                "type": "sap.ui.model.resource.ResourceModel",
-                "settings": {
-                    "bundleUrl": "/resources/sap/ui/core/messagebundle.properties",
-                    "async": true
-                }
-            },
-            "i18n_sap_ui_comp": {
-                "type": "sap.ui.model.resource.ResourceModel",
-                "settings": {
-                    "bundleUrl": "/resources/sap/ui/comp/messagebundle.properties",
-                    "async": true
-                }
-            },
-            "i18n_sap_m": {
-                "type": "sap.ui.model.resource.ResourceModel",
-                "settings": {
-                    "bundleUrl": "/resources/sap/m/messagebundle.properties",
                     "async": true
                 }
             }

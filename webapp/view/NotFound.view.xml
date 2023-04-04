@@ -1,9 +1,9 @@
 <mvc:View controllerName="xref.controller.NotFound"
     xmlns="sap.m"
     xmlns:mvc="sap.ui.core.mvc">
-    <MessagePage title="{i18n_sap_ui_core>TechInfo.SupportAssistantConfigPopup.ErrorNotFound}"
-        text="{i18n_sap_m>IllustratedMessage_TITLE_PageNotFound}"
-        description="{i18n_sap_m>IllustratedMessage_DESCRIPTION_PageNotFound}"
+    <MessagePage title="{i18n-sap.ui.core>TechInfo.SupportAssistantConfigPopup.ErrorNotFound}"
+        text="{i18n-sap.m>IllustratedMessage_TITLE_PageNotFound}"
+        description="{i18n-sap.m>IllustratedMessage_DESCRIPTION_PageNotFound}"
         showNavButton="true"
         navButtonPress="onNavBack"/>
 </mvc:View>

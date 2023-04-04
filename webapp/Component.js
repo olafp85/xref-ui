@@ -3,11 +3,14 @@
  */
 
 sap.ui.define([
+    "sap/ui/core/Core",
     "sap/ui/core/UIComponent",
+    "sap/ui/model/resource/ResourceModel",
     "xref/model/Xrefs",
+    "xref/model/Xref",
     "xref/model/User"
 ],
-    function (UIComponent, Xrefs, User) {
+    function (Core, UIComponent, ResourceModel, Xrefs, Xref, User) {
         "use strict";
 
         return UIComponent.extend("xref.Component", {
@@ -29,6 +32,14 @@ sap.ui.define([
                 // Enable routing
                 this.getRouter().initialize();
 
+                // Create reusable models for the resource bundles of the loaded libraries (sap.ui5.dependencies.libs) 
+                // Idea from https://blogs.sap.com/2022/06/21/ui5-how-to-reuse-standard-i18n-texts
+                for (const library of Object.keys(Core.getLoadedLibraries())) {
+                    let bundle = Core.getLibraryResourceBundle(library);
+                    let model = new ResourceModel({ bundle });
+                    this.setModel(model, "i18n-" + library);  // i18n-sap.ui.core
+                }
+
                 // Create the User model
                 let URI = this.getManifestEntry("/sap.app/dataSources/user/uri");
                 this.UserModel = new User(URI);
@@ -38,6 +49,10 @@ sap.ui.define([
                 URI = this.getManifestEntry("/sap.app/dataSources/xrefs/uri");
                 this.XrefsModel = new Xrefs(URI, this.UserModel);
                 this.setModel(this.XrefsModel, this.XrefsModel.ID);
+
+                // Create the Xref detail model 
+                this.XrefModel = new Xref(URI + "/");
+                this.setModel(this.XrefModel, this.XrefModel.ID);
             }
         });
     }

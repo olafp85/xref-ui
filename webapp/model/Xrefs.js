@@ -52,9 +52,8 @@ sap.ui.define([
                 try {
                     await this.loadData(this.URI);
                 } catch ({ statusText, responseText }) {
-                    let responseJson;
                     try {
-                        responseJson = JSON.parse(responseText);
+                        let responseJson = JSON.parse(responseText);
                         throw new Error(responseJson.message);
                     } catch (e) { }
                     throw new Error(responseText ?? statusText);

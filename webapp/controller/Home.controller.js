@@ -18,7 +18,7 @@ sap.ui.define([
 
         return BaseController.extend("xref.controller.Home", {
             onInit: function () {
-                // App title 
+                // App title (doesn't work when navigating directly to detail page)
                 this.getOwnerComponent().getModel("i18n").getResourceBundle()
                     .then(bundle => document.title = bundle.getText("appTitle"));
 
@@ -39,7 +39,7 @@ sap.ui.define([
                     columnListItem: {
                         type: ListType.Navigation
                     }
-                })
+                });
                 this.getView().setModel(this.viewModel, "view");
 
                 // Initialize the xrefs model
@@ -52,8 +52,9 @@ sap.ui.define([
                 // User model
                 this.User = this.getOwnerComponent().UserModel;
 
-                // Keep references to the dialogs 
+                // Keep references to the dialogs
                 this.loginDialog = null;
+                this.userDialog = null;
                 this.sortDialog = null;
             },
 
@@ -114,6 +115,7 @@ sap.ui.define([
             onLoginCancel: function () {
                 this.loginDialog.close();
                 this.loginDialog.getModel().setProperty("/credentials/password", null);
+                this.loginDialog.getModel().setProperty("/proceed", false);
             },
 
             onLoginCheckInput: function (event) {
@@ -220,6 +222,11 @@ sap.ui.define([
                     .finally(() => this.byId("table").setBusy(false))
                     .then(() => MessageToast.show("File was uploaded successfully"))
                     .catch(({ message }) => MessageBox.error(message));
+            },
+
+            onUser: function (event) {
+                let button = event.getSource();
+                this.byId("userDialog").openBy(button);
             },
 
             _setEditMode: function (on = true) {
