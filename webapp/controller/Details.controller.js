@@ -6,12 +6,15 @@ sap.ui.define([
     "use strict";
 
     return BaseController.extend("xref.controller.Details", {
+        Xref: null,
+
         onInit: function () {
             this.getRouter().getRoute("Details").attachMatched(this._onRouteMatched, this);
         },
 
         _onRouteMatched: function (oEvent) {
             let { id } = oEvent.getParameter("arguments");
+
             let viewModel = new JSONModel({
                 id
             });
@@ -19,14 +22,9 @@ sap.ui.define([
 
             // Initialize the xref model
             this.Xref = this.getOwnerComponent().XrefModel;
-            return;
-            this.getView().setBusy(true);
-            this.Xrefs.load(id)
-                .finally(() => this.getView().setBusy(false))
-                .catch(({ message }) => MessageBox.error(message));
-
-
-
+            this.Xref.attachRequestSent(() => this.getView().setBusy(true));
+            this.Xref.attachRequestCompleted(() => this.getView().setBusy(false));
+            this.Xref.load(id);
         }
     });
 });

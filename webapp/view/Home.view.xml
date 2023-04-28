@@ -5,7 +5,7 @@
     core:require="{ formatMessage: 'sap/base/strings/formatMessage' }">
 
     <Page title="{i18n>appTitle}"
-        class="sapUiContentPadding sapUiResponsivePadding--header">
+        class="sapUiResponsiveContentPadding--header sapUiResponsiveContentPadding">
 
         <headerContent>
             <Text text="{view>/version}"></Text>
@@ -24,8 +24,6 @@
 
         <content>
             <Table id="table"
-                width="auto"
-                class="sapUiResponsiveMargin"
                 autoPopinMode="true"
                 items="{
 		        	path: 'xrefs>/',

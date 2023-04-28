@@ -17,6 +17,16 @@ sap.ui.define([
         "use strict";
 
         return BaseController.extend("xref.controller.Home", {
+            // Models
+            Xrefs: null,
+            User: null,
+            viewModel: null,
+
+            // References to the dialogs
+            loginDialog: null,
+            userDialog: null,
+            sortDialog: null,
+
             onInit: function () {
                 // App title (doesn't work when navigating directly to detail page)
                 this.getOwnerComponent().getModel("i18n").getResourceBundle()
@@ -52,11 +62,6 @@ sap.ui.define([
                     }
                 });
                 this.getView().setModel(this.viewModel, "view");
-
-                // Keep references to the dialogs
-                this.loginDialog = null;
-                this.userDialog = null;
-                this.sortDialog = null;
             },
 
             onDisplay: function () {
