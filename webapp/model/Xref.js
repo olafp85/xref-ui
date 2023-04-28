@@ -16,12 +16,8 @@ sap.ui.define([
             load: async function (id) {
                 try {
                     await this.loadData(this.URI + id);
-                } catch ({ statusText, responseText }) {
-                    try {
-                        let responseJson = JSON.parse(responseText);
-                        throw new Error(responseJson.message);
-                    } catch (e) { }
-                    throw new Error(responseText ?? statusText);
+                } catch ({ statusText }) {
+                    throw new Error(statusText);
                 }
             }
         });
