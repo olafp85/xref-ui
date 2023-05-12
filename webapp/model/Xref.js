@@ -16,6 +16,7 @@ sap.ui.define([
             load: async function (id) {
                 try {
                     await this.loadData(this.URI + id);
+                    return this.getData();
                 } catch ({ statusText }) {
                     throw new Error(statusText);
                 }
