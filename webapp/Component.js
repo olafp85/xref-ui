@@ -5,12 +5,14 @@
 sap.ui.define([
     "sap/ui/core/Core",
     "sap/ui/core/UIComponent",
+    "sap/ui/Device",
+    "sap/ui/model/json/JSONModel",
     "sap/ui/model/resource/ResourceModel",
     "xref/model/Xrefs",
     "xref/model/Xref",
     "xref/model/User"
 ],
-    function (Core, UIComponent, ResourceModel, Xrefs, Xref, User) {
+    function (Core, UIComponent, Device, JSONModel, ResourceModel, Xrefs, Xref, User) {
         "use strict";
 
         return UIComponent.extend("xref.Component", {
@@ -35,6 +37,11 @@ sap.ui.define([
 
                 // Enable routing
                 this.getRouter().initialize();
+
+                // Device model
+                let model = new JSONModel(Device);
+                model.setDefaultBindingMode("OneWay");
+                this.setModel(model, "device");
 
                 // Create reusable models for the resource bundles of the loaded libraries (sap.ui5.dependencies.libs) 
                 // Idea from https://blogs.sap.com/2022/06/21/ui5-how-to-reuse-standard-i18n-texts
