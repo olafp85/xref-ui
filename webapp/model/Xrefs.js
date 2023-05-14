@@ -11,6 +11,7 @@ sap.ui.define([
 
             constructor: function (URI, UserModel) {
                 JSONModel.prototype.constructor.call(this);
+                this.setSizeLimit(999_999);
                 this.URI = URI;
                 this.User = UserModel;
             },
