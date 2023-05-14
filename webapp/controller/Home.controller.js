@@ -28,10 +28,6 @@ sap.ui.define([
             sortDialog: null,
 
             onInit: function () {
-                // App title (doesn't work when navigating directly to detail page)
-                this.getOwnerComponent().getModel("i18n").getResourceBundle()
-                    .then(bundle => document.title = bundle.getText("appTitle"));
-
                 // Initialize the xrefs model
                 this.Xrefs = this.getOwnerComponent().XrefsModel;
                 this.Xrefs.attachRequestSent(() => this.byId("table").setBusy(true));

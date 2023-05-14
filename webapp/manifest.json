@@ -11,7 +11,7 @@
             ]
         },
         "applicationVersion": {
-            "version": "0.0.16"
+            "version": "0.0.17"
         },
         "title": "{{appTitle}}",
         "description": "{{appDescription}}",
@@ -113,11 +113,13 @@
             "targets": {
                 "home": {
                     "viewName": "Home",
-                    "viewLevel": 1
+                    "viewLevel": 1,
+                    "title": "{i18n>appTitle}"
                 },
                 "details": {
                     "viewName": "Details",
-                    "viewLevel": 2
+                    "viewLevel": 2,
+                    "title": "{xref>/name}"
                 },
                 "notFound": {
                     "viewName": "NotFound"

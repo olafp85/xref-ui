@@ -37,6 +37,7 @@ sap.ui.define([
 
                 // Enable routing
                 this.getRouter().initialize();
+                this.getRouter().attachTitleChanged(event => document.title = event.getParameter("title"));  // From manifest
 
                 // Device model
                 let model = new JSONModel(Device);
