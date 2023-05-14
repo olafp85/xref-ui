@@ -45,40 +45,32 @@ sap.ui.define([
                 .toLowerCase();
         },
 
+        onCollapseAllGroups: function () {
+            this.graph.getGroups().forEach(group => group.setCollapsed(true));
+        },
+
+        onExpandAllGroups: function () {
+            this.graph.getGroups().forEach(group => group.setCollapsed(false));
+        },
+
         onInit: function () {
-            // Initialize the xref model
+            this.getRouter().getRoute("Details").attachMatched(this.onRouteMatch, this);
+
+            // Reference to the xref model
             this.Xref = this.getOwnerComponent().XrefModel;
             this.Xref.attachRequestSent(() => this.getView().setBusy(true));
-            this.Xref.attachRequestCompleted(() => this.getView().setBusy(false));
 
             // Set the header
             this.graph = this.byId("graph");
+            this.graph.attachGraphReady(() => this.getView().setBusy(false));
             this.graph.getToolbar().insertContent(new Text({
                 text: "{= ${xref>/type}.toLowerCase()} {xref>/name}",
                 wrapping: false
             }));
 
             // Add functions to the toolbar
-            this.graph.getToolbar().addContent(new OverflowToolbarButton({
-                icon: "sap-icon://collapse-all",
-                tooltip: "Collapse all groups",
-                type: "Transparent",
-                press: () => this.byId("graph").getGroups().forEach(group => group.setCollapsed(true))
-            }));
-
-            this.graph.getToolbar().addContent(new OverflowToolbarButton({
-                icon: "sap-icon://expand-all",
-                tooltip: "Expand all groups",
-                type: "Transparent",
-                press: () => this.byId("graph").getGroups().forEach(group => group.setCollapsed(false))
-            }));
-
-            // Initialize the view model
-            this.viewModel = new JSONModel({
-                groupsCollapsed: false
-            });
-            this.getView().setModel(this.viewModel, "view");
-            this.getRouter().getRoute("Details").attachMatched(this.onRouteMatch, this);
+            this.graph.getToolbar().addContent(this.byId("collapseAllButton"));
+            this.graph.getToolbar().addContent(this.byId("expandAllButton"));
         },
 
         onRouteMatch: function (oEvent) {

@@ -4,6 +4,7 @@
     xmlns:mvc="sap.ui.core.mvc"
     xmlns:m="sap.m"
     xmlns="sap.suite.ui.commons.networkgraph"
+    busyIndicatorDelay="0"
 >
     <m:HBox
         fitContainer="true"
@@ -67,6 +68,22 @@
                     backgroundColor="lightgray"
                 />
             </statuses>
+            <dependents>
+                <m:OverflowToolbarButton
+                    id="collapseAllButton"
+                    icon="sap-icon://collapse-all"
+                    text="{i18n>collapseAllGroups}"
+                    type="Transparent"
+                    press="onCollapseAllGroups"
+                />
+                <m:OverflowToolbarButton
+                    id="expandAllButton"
+                    icon="sap-icon://expand-all"
+                    text="{i18n>expandAllGroups}"
+                    type="Transparent"
+                    press="onExpandAllGroups"
+                />
+            </dependents>
         </Graph>
         <GraphMap
             id="map"
