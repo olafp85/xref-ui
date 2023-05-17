@@ -123,6 +123,12 @@
                         <Text text="{i18n>name}" />
                     </Column>
                     <Column importance="Low">
+                        <Text text="{i18n>depthWhereUsed}" />
+                    </Column>
+                    <Column importance="Low">
+                        <Text text="{i18n>depthCalls}" />
+                    </Column>
+                    <Column importance="Low">
                         <Text text="{i18n>system}" />
                     </Column>
                     <Column
@@ -141,6 +147,8 @@
                         <cells>
                             <Text text="{= ${xrefs>type}.toLowerCase()}" />
                             <Text text="{xrefs>name}" />
+                            <Text text="{xrefs>depthWhereUsed}" />
+                            <Text text="{xrefs>depthCalls}" />
                             <Text text="{xrefs>system}" />
                             <Text
                                 text="{
