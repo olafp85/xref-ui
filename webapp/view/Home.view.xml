@@ -122,6 +122,9 @@
                     <Column>
                         <Text text="{i18n>name}" />
                     </Column>
+                    <Column visible="false">
+                        <Text text="{i18n>component}" />
+                    </Column>
                     <Column importance="Low">
                         <Text text="{i18n>depthWhereUsed}" />
                     </Column>
@@ -129,10 +132,16 @@
                         <Text text="{i18n>depthCalls}" />
                     </Column>
                     <Column importance="Low">
+                        <Text text="{i18n>includeSapObjects}" />
+                    </Column>
+                    <Column importance="Medium">
                         <Text text="{i18n>system}" />
                     </Column>
+                    <Column importance="Low">
+                        <Text text="{i18n>release}" />
+                    </Column>
                     <Column
-                        importance="Low"
+                        importance="Medium"
                         hAlign="Right"
                     >
                         <Text text="{i18n>date}" />
@@ -147,9 +156,15 @@
                         <cells>
                             <Text text="{= ${xrefs>type}.toLowerCase()}" />
                             <Text text="{xrefs>name}" />
+                            <Text text="{xrefs>component}" />
                             <Text text="{xrefs>depthWhereUsed}" />
                             <Text text="{xrefs>depthCalls}" />
+                            <CheckBox
+                                selected="{xrefs>includeSapObjects}"
+                                displayOnly="true"
+                            />
                             <Text text="{xrefs>system}" />
+                            <Text text="{xrefs>release}" />
                             <Text
                                 text="{
                                 path: 'xrefs>date',
