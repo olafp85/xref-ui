@@ -1,8 +1,12 @@
-<mvc:View controllerName="xref.controller.App"
+<mvc:View
+    controllerName="xref.controller.App"
     xmlns:html="http://www.w3.org/1999/xhtml"
     xmlns:mvc="sap.ui.core.mvc"
     xmlns="sap.m"
-    displayBlock="true">
-    <App id="app">
-    </App>
+    displayBlock="true"
+>
+    <App
+        id="app"
+        homeIcon="images/favicon.png"
+    />
 </mvc:View>

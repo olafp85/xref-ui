@@ -11,7 +11,7 @@
             ]
         },
         "applicationVersion": {
-            "version": "0.0.18"
+            "version": "0.0.19"
         },
         "title": "{{appTitle}}",
         "description": "{{appDescription}}",
