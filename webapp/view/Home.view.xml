@@ -3,14 +3,21 @@
     xmlns:mvc="sap.ui.core.mvc"
     xmlns:core="sap.ui.core"
     xmlns="sap.m"
-    core:require="{ formatMessage: 'sap/base/strings/formatMessage' }"
+    core:require="{ formatMessage: 'sap/base/strings/formatMessage', library: 'sap/m/library' }"
 >
     <Page
         title="{i18n>appTitle}"
         class="sapUiResponsiveContentPadding--header sapUiResponsiveContentPadding"
     >
         <headerContent>
-            <Text text="v{view>/version}" />
+            <Text
+                text="v{view>/version}"
+                visible="false"
+            />
+            <Button
+                text="{i18n>htmlVersion}"
+                press="library.URLHelper.redirect('/apps/xref-html', true)"
+            />
             <Button
                 text="{i18n>login}"
                 press="onLogin"
