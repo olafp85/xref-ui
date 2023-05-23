@@ -16,7 +16,7 @@
             />
             <Button
                 text="{i18n>htmlVersion}"
-                press="library.URLHelper.redirect('/apps/xref-html', true)"
+                press="library.URLHelper.redirect('https://luukpohlmann.nl/apps/xref-html/', true)"
             />
             <Button
                 text="{i18n>login}"
@@ -43,7 +43,10 @@
                 autoPopinMode="true"
                 items="{
 		        	path: 'xrefs>/',
-		        	sorter: { path: 'name' }
+		        	sorter: [
+                        { path: 'type' },
+                        { path: 'name' }
+                    ]
 	        	}"
                 fixedLayout="false"
                 sticky="ColumnHeaders"

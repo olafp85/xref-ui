@@ -5,10 +5,10 @@
 
         <sortItems>
             <ViewSettingsItem text="{i18n>type}"
-                key="type" />
+                key="type"
+                selected="true" />
             <ViewSettingsItem text="{i18n>name}"
-                key="name"
-                selected="true"/>
+                key="name" />
             <ViewSettingsItem text="{i18n>system}"
                 key="system" />
             <ViewSettingsItem text="{i18n>date}"
