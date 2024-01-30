@@ -15,10 +15,9 @@
             height: 100%;
         }
     </style>
-    <script id="sap-ui-bootstrap" src="https://ui5.sap.com/1.108.10/resources/sap-ui-core.js"
-        data-sap-ui-theme="sap_horizon" data-sap-ui-resourceroots='{ "xref": "./" }' data-sap-ui-compatVersion="edge"
-        data-sap-ui-async="true" data-sap-ui-frameOptions="trusted"
-        data-sap-ui-onInit="module:sap/ui/core/ComponentSupport"></script>
+    <script id="sap-ui-bootstrap" src="resources/sap-ui-core.js" data-sap-ui-theme="sap_horizon"
+        data-sap-ui-resourceroots='{ "xref": "./" }' data-sap-ui-compatVersion="edge" data-sap-ui-async="true"
+        data-sap-ui-frameOptions="trusted" data-sap-ui-onInit="module:sap/ui/core/ComponentSupport"></script>
 </head>
 
 <body class="sapUiBody sapUiSizeCompact" id="content">
@@ -26,5 +25,28 @@
         data-handle-validation="true">
     </div>
 </body>
+
+<template id="svg-template">
+    <svg xmlns="http://www.w3.org/2000/svg">
+        <style xmlns="http://www.w3.org/1999/xhtml">
+            table {
+                font-family: sans-serif;
+                font-size: x-small;
+                padding: 2px;
+            }
+
+            tr:last-child td:last-child {
+                font-size: medium;
+            }
+
+            td {
+                padding: 0px 2px;
+            }
+        </style>
+        <foreignObject width="100%" height="100%">
+            <table xmlns="http://www.w3.org/1999/xhtml" />
+        </foreignObject>
+    </svg>
+</template>
 
 </html>
