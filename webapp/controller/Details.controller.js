@@ -9,46 +9,27 @@ sap.ui.define([
 
     return BaseController.extend("xref.controller.Details", {
         cy: null,
+        style: null,
         Xref: null,
         viewModel: null,
 
-        nodeInElements: function (elements, depth) {
-            let inElements = elements.incomers();
-            return (depth == 0) ? this.cy.collection() : inElements.union(this.nodeInElements(inElements, depth - 1));
+        onEdgeLengthChange: function () {
+            this._refreshLayout();
         },
 
-        nodeInMaxLength: function (node) {
-            // Perform an A* search to find the shortest path from the node to each predecessors
-            let predecessors = node.predecessors("node");
-            let maxLength = predecessors.reduce((value = 0, predecessor) => {
-                let aStar = this.cy.elements().aStar({
-                    root: node,
-                    goal: predecessor
-                });
-                return Math.max(value, aStar.distance);
-            });
-            return maxLength ?? 0;
-        },
-
-        nodeOutElements: function (elements, depth) {
-            let outElements = elements.outgoers();
-            return (depth == 0) ? this.cy.collection() : outElements.union(this.nodeOutElements(outElements, depth - 1));
-        },
-
-        nodeOutMaxLength: function (node) {
-            let successors = node.successors("node");
-            let maxLength = successors.reduce((value = 0, successor) => {
-                let aStar = this.cy.elements().aStar({
-                    root: node,
-                    goal: successor
-                });
-                return Math.max(value, aStar.distance);
-            });
-            return maxLength ?? 0;
+        onHighlightChange: function (event) {
+            let highlight = Boolean(this.viewModel.getProperty("/highlight"));
+            this.cy.elements().removeClass("highlight subgraph");
+            this.cy.elements().addClass((highlight) ? "highlight" : "subgraph");
+            if (event) this._refreshLayout();
         },
 
         onInit: function () {
+            console.log("onInit");
             this.getRouter().getRoute("Details").attachMatched(this.onRouteMatch, this);
+
+            // Cytoscape stylesheet
+            this.style = fetch("css/cytoscape.css");
 
             // Reference to the xref model
             this.Xref = this.getOwnerComponent().XrefModel;
@@ -69,11 +50,13 @@ sap.ui.define([
                 sapCalls: true,
                 inLength: {
                     value: 0,
-                    max: 3
+                    max: 0,
+                    enabled: false
                 },
                 outLength: {
                     value: 0,
-                    max: 3
+                    max: 0,
+                    enabled: false
                 },
                 edgeLength: 0,
                 highlight: "true",  // the view uses string-values
@@ -88,52 +71,92 @@ sap.ui.define([
                 .setFilterFunction((value, item) => item.getText().match(new RegExp(value, "i")));
         },
 
-        onHighlightChange: function (event) {
-            let highlight = Boolean(this.viewModel.getProperty("/highlight"));
-            this.cy.elements().removeClass("highlight subgraph");
-            this.cy.elements().addClass((highlight) ? "highlight" : "subgraph");
-            if (event) this.refreshLayout();
+        onInOutLengthChange: function (event) {
+            this._showSelection("onInOutLengthChange");
         },
 
         onLabelsSelect: function (event) {
             this.cy.nodes().toggleClass("labels", this.viewModel.getProperty("/labels"));
-            if (event) this.refreshLayout();
+            if (event) this._refreshLayout();
+        },
+
+        onLayoutStop: function (event) {
+            // Ververs de selectielijst obv. de zichtbare nodes
+            let items = this.cy.nodes(":visible").map(node => {
+                return {
+                    key: node.id(),
+                    text: node.data("name")
+                }
+            });
+            this.viewModel.setProperty("/selection/items", items);
         },
 
         onNodeSelect: function (event) {
             let node = event.target;
-            this.viewModel.setProperty("/selection/value", node.id());
+            let inMaxLength = this._nodeInMaxLength(node);
+            let outMaxLength = this._nodeOutMaxLength(node);
 
-            this.viewModel.setProperty("/inLength/value", 1);
-            this.viewModel.setProperty("/inLength/max", this.nodeInMaxLength(node));
+            this.viewModel.setData({
+                selection: {
+                    value: node.id(),
+                },
+                inLength: {
+                    value: (inMaxLength) ? 1 : 0,
+                    max: inMaxLength || 1,
+                    enabled: Boolean(inMaxLength)
+                },
+                outLength: {
+                    value: (outMaxLength) ? 1 : 0,
+                    max: outMaxLength || 1,
+                    enabled: Boolean(outMaxLength)
+                },
+            }, true /* Merge */);
 
-            this.viewModel.setProperty("/outLength/value", 1);
-            this.viewModel.setProperty("/outLength/max", this.nodeOutMaxLength(node));
-
-            this.showSelection();
+            this._showSelection();
         },
 
         onNodeUnselect: function (event) {
-            this.viewModel.setProperty("/selection/value", "");
+            this.cy.elements().removeClass("path not-path");
+
+            this.viewModel.setData({
+                selection: {
+                    value: ""
+                },
+                inLength: {
+                    value: 0,
+                    max: 1,  // Setting it to 0 doesn't work correctly in the UI
+                    enabled: false
+                },
+                outLength: {
+                    value: 0,
+                    max: 1,
+                    enabled: false
+                },
+            }, true /* Merge */);
+
+            // Ververs de layout alleen bij het tonen van de subgraph
+            let highlight = Boolean(this.viewModel.getProperty("/highlight"));
+            if (!highlight) this._refreshLayout();
         },
 
         onRouteMatch: function (event) {
+            console.log("onRouteMatch");
             let { id } = event.getParameter("arguments");
 
             Promise.all([
                 this.Xref.load(id),
                 fetch("css/cytoscape.css").then(response => response.text())
             ])
-                .then(([xref, style]) => this.showGraph(xref, style))
+                .then(([xref, style]) => this._showGraph(xref, style))
                 .catch(({ message }) => MessageBox.error(message));
         },
 
         onSapCallsSelect: function () {
-            this.refreshGraph();
+            this._refreshGraph();
         },
 
         onScopeChange: function () {
-            this.refreshGraph();
+            this._refreshGraph();
         },
 
         onSelectionChange: function () {
@@ -143,10 +166,45 @@ sap.ui.define([
         },
 
         onSpringLayoutSelect: function () {
-            this.refreshLayout();
+            this._refreshLayout();
         },
 
-        refreshGraph: function () {
+        _nodeInElements: function (elements, depth) {
+            let inElements = elements.incomers();
+            return (depth == 0) ? this.cy.collection() : inElements.union(this._nodeInElements(inElements, depth - 1));
+        },
+
+        _nodeInMaxLength: function (node) {
+            // Perform an A* search to find the shortest path from the node to each predecessors
+            let predecessors = node.predecessors("node");
+            let maxLength = predecessors.reduce((value = 0, predecessor) => {
+                let aStar = this.cy.elements().aStar({
+                    root: node,
+                    goal: predecessor
+                });
+                return Math.max(value, aStar.distance);
+            });
+            return maxLength ?? 0;
+        },
+
+        _nodeOutElements: function (elements, depth) {
+            let outElements = elements.outgoers();
+            return (depth == 0) ? this.cy.collection() : outElements.union(this._nodeOutElements(outElements, depth - 1));
+        },
+
+        _nodeOutMaxLength: function (node) {
+            let successors = node.successors("node");
+            let maxLength = successors.reduce((value = 0, successor) => {
+                let aStar = this.cy.elements().aStar({
+                    root: node,
+                    goal: successor
+                });
+                return Math.max(value, aStar.distance);
+            });
+            return maxLength ?? 0;
+        },
+
+        _refreshGraph: function () {
             // Scope
             let scope = this.viewModel.getProperty("/scope");
             this.cy.elements().removeClass("scope-internal scope-external");
@@ -156,7 +214,6 @@ sap.ui.define([
             // SAP calls
             let sapCalls = this.viewModel.getProperty("/sapCalls");
             this.cy.elements().toggleClass("no-sap-calls", !sapCalls);
-
 
             // Markeer niet-relevante nodes en edges
             let edgeFilter = (scope === "all") ? undefined : `[?${scope}]`;
@@ -170,34 +227,13 @@ sap.ui.define([
 
             this.onHighlightChange();
             this.onLabelsSelect();
-
-            // Bewaar de huidige selectie
-            let selectedNode = this.cy.$("node:selected");
-            selectedNode.unselect();  // anders blijft deze zichtbaar
-
-            this.refreshLayout()
-                .then(() => {
-                    // Ververs de selectielijst obv. de zichtbare nodes
-                    let items = this.cy.nodes(":visible").map(node => {
-                        return {
-                            key: node.id(),
-                            text: node.data("name")
-                        }
-                    });
-                    this.viewModel.setProperty("/selection/items", items);
-
-                    // Herstel een eventuele eerdere selectie
-                    if (selectedNode.visible()) {
-                        selectedNode.select();
-                    }
-                })
+            this._refreshLayout();
         },
 
-        refreshLayout: async function () {
+        _refreshLayout: function () {
             let springLayout = this.viewModel.getProperty("/springLayout");
-            // TODO
-            let edgeLength = 0;  // Range 0..5
-            let factor = 1;  // Range 1, 1.2, 1.4, 1.6, 1.8, 2
+            let edgeLength = this.viewModel.getProperty("/edgeLength");  // Range 0..5
+            let factor = 1 + edgeLength / 5;  // Range 1, 1.2, 1.4, 1.6, 1.8, 2
             let options = (springLayout) ?
                 {
                     name: "cose-bilkent",
@@ -211,10 +247,13 @@ sap.ui.define([
 
             let layout = this.cy.layout(options);
             layout.run();
-            return layout.promiseOn("layoutstop");
+            layout.on("layoutstop", this.onLayoutStop.bind(this));
         },
 
-        showGraph: function (xref, style) {
+        _showGraph: async function (xref, style) {
+            let styleX = await this.style;
+            let styleY = await styleX.text();
+            console.log("styleY");;
             this.cy = cytoscape({
                 container: document.getElementById("cy"),
                 elements: new Graph(xref).elements,
@@ -222,29 +261,29 @@ sap.ui.define([
                 wheelSensitivity: 0.1  // Reduced sensitivity
             });
 
-            this.refreshGraph();
+            this._refreshGraph();
 
             // Cytoscape event handlers 
             this.cy.on("select", "node", this.onNodeSelect.bind(this));
             this.cy.on("unselect", "node", this.onNodeUnselect.bind(this));
         },
 
-        showSelection: function () {
+        _showSelection: function () {
             let node = this.cy.$("node:selected");
             let inLength = this.viewModel.getProperty("/inLength/value");
             let outLength = this.viewModel.getProperty("/outLength/value");
 
-            let inElements = this.nodeInElements(node, inLength);
-            let outElements = this.nodeOutElements(node, outLength);
+            let inElements = this._nodeInElements(node, inLength);
+            let outElements = this._nodeOutElements(node, outLength);
             let path = this.cy.collection().merge(inElements).merge(outElements);
 
             this.cy.elements().removeClass("path not-path");
             path.addClass("path");
-            this.cy.elements().not(path).not(node).addClass("not-path");  // TODO REDEN?
+            this.cy.elements().not(path).not(node).addClass("not-path");
 
             // Ververs de layout alleen bij het tonen van de subgraph
-            let highlight = this.viewModel.getProperty("/highlight");
-            if (!highlight) this.refreshLayout();
+            let highlight = Boolean(this.viewModel.getProperty("/highlight"));
+            if (!highlight) this._refreshLayout();
         }
     });
 });

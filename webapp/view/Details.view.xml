@@ -128,7 +128,9 @@
                         <Slider
                             max="{view>/inLength/max}"
                             value="{view>/inLength/value}"
-                            enableTickmarks="true"
+                            enabled="{view>/inLength/enabled}"
+                            enableTickmarks="false"
+                            liveChange="onInOutLengthChange"
                         >
                             <layoutData>
                                 <layout:GridData span="L3 M4 S6" />
@@ -139,7 +141,9 @@
                         <Slider
                             max="{view>/outLength/max}"
                             value="{view>/outLength/value}"
+                            enabled="{view>/outLength/enabled}"
                             enableTickmarks="true"
+                            liveChange="onInOutLengthChange"
                         >
                             <layoutData>
                                 <layout:GridData span="L3 M4 S6" />
@@ -163,6 +167,7 @@
                             max="5"
                             value="{view>/edgeLength}"
                             enableTickmarks="true"
+                            liveChange="onEdgeLengthChange"
                         >
                             <layoutData>
                                 <layout:GridData span="L3 M4 S6" />
