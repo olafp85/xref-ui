@@ -1,3 +1,6 @@
+/**
+ * Dit graph model converteert het Xref-formaat (met units en calls) naar het Cytoscape graph-formaat (nodes en edges)
+ */
 sap.ui.define([
     "sap/ui/base/Object"
 ], function (BaseObject) {
@@ -5,47 +8,36 @@ sap.ui.define([
     return BaseObject.extend("xref.model.Graph", {
         COMPONENT_SEPARATOR: " | ",
 
+        nodeDepth: 0,
+        elements: {},
+
         constructor: function (xref) {
-            let nodesMap = new Map();
-            const nodes = xref.units.map(({ id, sap }) => {
-                let data = {
-                    id,
-                    name: this.nodeName(id),
-                    image: this.nodeImage(id),
-                    width: 1,  // TODO NODIG?
-                    height: 1,
-                    sap,
-                    degreeInternal: 0,
-                    degreeExternal: 0,
-                    degreeExternalWithoutSap: 0
+            this.nodeDepth = xref.units.reduce((max, { id }) => {
+                let depth = this.nodeComponents(id).length - 1;
+                return Math.max(max, depth);
+            }, 0);
+
+            let nodes = xref.units.map(({ id, sap, package }) => {
+                return {
+                    data: {
+                        id,
+                        name: this.nodeName(id),
+                        image: this.nodeImage(id),
+                        sap,
+                        package
+                    }
                 };
-                nodesMap.set(id, data);
-                return { data };
             });
 
-            const edges = xref.calls.map(({ source, target }) => {
+            let edges = xref.calls.map(({ source, target }) => {
                 let sourceRoot = this.nodeComponents(source)[0].toString();
                 let targetRoot = this.nodeComponents(target)[0].toString();
-                let internal = sourceRoot === targetRoot;
-                if (internal) {
-                    nodesMap.get(source).degreeInternal++;
-                    nodesMap.get(target).degreeInternal++;
-                } else {
-                    nodesMap.get(source).degreeExternal++;
-                    nodesMap.get(target).degreeExternal++;
-
-                    if (!nodesMap.get(target).sap) {
-                        nodesMap.get(source).degreeExternalWithoutSap++;
-                    }
-                }
                 return {
                     data: {
                         id: `${source} -> ${target}`,
                         source,
                         target,
-                        internal,
-                        external: !internal,  // TODO nodig?
-                        scope: sourceRoot === targetRoot ? "internal" : "external",  // TODO nodig?
+                        scope: sourceRoot === targetRoot ? "internal" : "external",
                     }
                 };
             });
@@ -57,7 +49,7 @@ sap.ui.define([
         },
 
         nodeComponents: function (id) {
-            // \FG:SBAL\FU:BAL_LOG_CREATE => [ ["fg", "sbal"], ["fu", "bal_log_create"] ]
+            // "\FG:SBAL\FU:BAL_LOG_CREATE" » [ ["fg", "sbal"], ["fu", "bal_log_create"] ]
             return this.nodeName(id)
                 .split(this.COMPONENT_SEPARATOR)
                 .map(component => component.split(":"));
@@ -94,10 +86,10 @@ sap.ui.define([
         },
 
         nodeName: function (id) {
-            // \FG:SBAL\FU:BAL_LOG_CREATE => fg:sbal | fu:bal_log_create 
+            // "\FG:SBAL\FU:BAL_LOG_CREATE" => "fg:sbal | fu:bal_log_create" 
             return id
+                .slice(1)
                 .toLowerCase()
-                .replace(/^\\/, "")
                 .replaceAll("\\", this.COMPONENT_SEPARATOR);
         }
     });

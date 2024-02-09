@@ -22,6 +22,10 @@ node[?sap] {
   background-color: lightblue;
 }
 
+node[package ^="$"] {
+  background-color: rgb(226, 199, 203);
+}
+
 node.not-path {
   opacity: 0.5;
 }

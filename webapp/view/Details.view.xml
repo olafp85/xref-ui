@@ -7,6 +7,7 @@
     xmlns:layout="sap.ui.layout"
     xmlns:form="sap.ui.layout.form"
     xmlns="sap.m"
+    busyIndicatorDelay="0"
 >
     <semantic:SemanticPage
         headerPinnable="false"
@@ -50,6 +51,7 @@
                             max="{view>/condense/max}"
                             value="{view>/condense/value}"
                             enableTickmarks="true"
+                            liveChange="onCondenseChange"
                         >
                             <layoutData>
                                 <layout:GridData span="L3 M4 S6" />
@@ -59,7 +61,7 @@
                         <!-- Scope -->
                         <SegmentedButton
                             selectedKey="{view>/scope}"
-                            selectionChange="refreshGraph"
+                            selectionChange="onScopeChange"
                         >
                             <items>
                                 <SegmentedButtonItem
@@ -97,7 +99,8 @@
                             id="selection-combo-box"
                             items="{
                                 path: 'view>/selection/items',
-                                sorter: { path: 'text' }
+                                sorter: { path: 'text' },
+                                length: 999
                             }"
                             selectedKey="{view>/selection/value}"
                             selectionChange="onSelectionChange"
