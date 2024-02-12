@@ -8,5 +8,6 @@
     <App
         id="app"
         homeIcon="images/favicon.png"
+        autoFocus="false"
     />
 </mvc:View>

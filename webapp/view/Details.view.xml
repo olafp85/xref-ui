@@ -1,101 +1,220 @@
 <mvc:View
+    xmlns:tnt="sap.tnt"
     controllerName="xref.controller.Details"
-    xmlns:layout="sap.suite.ui.commons.networkgraph.layout"
     xmlns:mvc="sap.ui.core.mvc"
-    xmlns:m="sap.m"
-    xmlns="sap.suite.ui.commons.networkgraph"
+    xmlns:core="sap.ui.core"
+    xmlns:semantic="sap.f.semantic"
+    xmlns:layout="sap.ui.layout"
+    xmlns:form="sap.ui.layout.form"
+    xmlns="sap.m"
     busyIndicatorDelay="0"
 >
-    <m:HBox
-        fitContainer="true"
-        renderType="Bare"
+    <semantic:SemanticPage
+        headerPinnable="false"
+        headerExpanded="{= !${device>/system/phone} }"
+        class="sapUiResponsiveContentPadding"
     >
-        <Graph
-            id="graph"
-            nodes="{xref>/units}"
-            lines="{xref>/calls}"
-            groups="{xref>/groups}"
-        >
-            <layoutData>
-                <m:FlexItemData
-                    growFactor="1"
-                    shrinkFactor="1"
-                    minWidth="300px"
-                />
-            </layoutData>
+        <semantic:titleHeading>
+            <Title text="{xref>/name}" />
+        </semantic:titleHeading>
 
-            <nodes>
-                <Node
-                    key="{xref>id}"
-                    title="{
-                            path: 'xref>id',
-                            formatter: '.nodeName'
-                    }"
-                    group="{
-                            path: 'xref>id',
-                            formatter: '.nodeGroup'
-                    }"
-                    titleLineSize="0"
-                    width="auto"
-                    maxWidth="250"
-                    shape="Circle"
+        <semantic:titleContent>
+            <FlexBox
+                height="2rem"
+                alignItems="Center"
+            >
+                <Text text="{= ${xref>/type}.toLowerCase()}" />
+            </FlexBox>
+        </semantic:titleContent>
+
+        <semantic:headerContent>
+            <!--
+                Sizes: [columns used by the labels] : [columns for the fields] : [empty columns]
+                L: 2:10:0
+                M: 2:10:0
+                S: 12:12:0
+            -->
+            <VBox>
+                <VBox>
+                    <!-- Via de VBox constructie is een maxWidth (size XL) mogelijk voor de form -->
+                    <form:SimpleForm
+                        layout="ResponsiveGridLayout"
+                        editable="true"
+                        labelSpanL="2"
+                        labelSpanM="2"
+                        emptySpanL="0"
+                        emptySpanM="0"
+                    >
+                        <!-- Condense -->
+                        <Label text="Condense" />
+                        <Slider
+                            max="{view>/condense/max}"
+                            value="{view>/condense/value}"
+                            enableTickmarks="true"
+                            liveChange="onCondenseChange"
+                        >
+                            <layoutData>
+                                <layout:GridData span="L3 M4 S6" />
+                            </layoutData>
+                        </Slider>
+
+                        <!-- Scope -->
+                        <SegmentedButton
+                            selectedKey="{view>/scope}"
+                            selectionChange="onScopeChange"
+                        >
+                            <items>
+                                <SegmentedButtonItem
+                                    text="All"
+                                    key="all"
+                                />
+                                <SegmentedButtonItem
+                                    text="Internal"
+                                    key="internal"
+                                />
+                                <SegmentedButtonItem
+                                    text="External"
+                                    key="external"
+                                />
+                            </items>
+                            <layoutData>
+                                <layout:GridData span="L3 M4 S8" />
+                            </layoutData>
+                        </SegmentedButton>
+
+                        <!-- SAP calls -->
+                        <CheckBox
+                            text="SAP calls"
+                            selected="{view>/sapCalls}"
+                            select="onSapCallsSelect"
+                        >
+                            <layoutData>
+                                <layout:GridData span="L2 M2 S4" />
+                            </layoutData>
+                        </CheckBox>
+
+                        <!-- Selection -->
+                        <Label text="Selection" />
+                        <ComboBox
+                            id="selection-combo-box"
+                            items="{
+                                path: 'view>/selection/items',
+                                sorter: { path: 'text' },
+                                length: 999
+                            }"
+                            selectedKey="{view>/selection/value}"
+                            selectionChange="onSelectionChange"
+                            showClearIcon="true"
+                        >
+                            <core:Item
+                                key="{view>key}"
+                                text="{view>text}"
+                            />
+                            <layoutData>
+                                <layout:GridData span="L6 M8 S8" />
+                            </layoutData>
+                        </ComboBox>
+
+                        <!-- Labels -->
+                        <CheckBox
+                            text="Labels"
+                            selected="{view>/labels}"
+                            select="onLabelsSelect"
+                        >
+                            <layoutData>
+                                <layout:GridData span="L2 M2 S4" />
+                            </layoutData>
+                        </CheckBox>
+
+                        <!-- In length -->
+                        <Label text="In/out length" />
+                        <Slider
+                            max="{view>/inLength/max}"
+                            value="{view>/inLength/value}"
+                            enabled="{view>/inLength/enabled}"
+                            enableTickmarks="false"
+                            liveChange="onInOutLengthChange"
+                        >
+                            <layoutData>
+                                <layout:GridData span="L3 M4 S6" />
+                            </layoutData>
+                        </Slider>
+
+                        <!-- Out length -->
+                        <Slider
+                            max="{view>/outLength/max}"
+                            value="{view>/outLength/value}"
+                            enabled="{view>/outLength/enabled}"
+                            enableTickmarks="true"
+                            liveChange="onInOutLengthChange"
+                        >
+                            <layoutData>
+                                <layout:GridData span="L3 M4 S6" />
+                            </layoutData>
+                        </Slider>
+
+                        <!-- Spring layout -->
+                        <CheckBox
+                            text="Spring layout"
+                            selected="{view>/springLayout}"
+                            select="onSpringLayoutSelect"
+                        >
+                            <layoutData>
+                                <layout:GridData span="L2 M2 S6" />
+                            </layoutData>
+                        </CheckBox>
+
+                        <!-- Edge length -->
+                        <Label text="Edge length" />
+                        <Slider
+                            max="5"
+                            value="{view>/edgeLength}"
+                            enableTickmarks="true"
+                            liveChange="onEdgeLengthChange"
+                        >
+                            <layoutData>
+                                <layout:GridData span="L3 M4 S6" />
+                            </layoutData>
+                        </Slider>
+
+                        <!-- Highlight -->
+                        <SegmentedButton
+                            selectedKey="{view>/highlight}"
+                            selectionChange="onHighlightChange"
+                        >
+                            <items>
+                                <SegmentedButtonItem
+                                    text="Highlight"
+                                    key="true"
+                                />
+                                <SegmentedButtonItem
+                                    text="Subgraph"
+                                    key=""
+                                />
+                            </items>
+                            <layoutData>
+                                <layout:GridData span="L3 M4 S6" />
+                            </layoutData>
+                        </SegmentedButton>
+                    </form:SimpleForm>
+
+                    <layoutData>
+                        <FlexItemData maxWidth="1000px" />
+                    </layoutData>
+                </VBox>
+            </VBox>
+        </semantic:headerContent>
+
+        <semantic:content>
+            <Panel
+                height="100%"
+                class="sapUiNoContentPadding"
+            >
+                <!-- <div id="cy" style="height: 100%"></div> -->
+                <core:HTML
+                    content="&lt;div id=&quot;cy&quot; style=&quot;height: 100%&quot;&gt;&lt;/div&gt;"
                 />
-            </nodes>
-            <lines>
-                <Line
-                    from="{xref>source}"
-                    to="{xref>target}"
-                />
-            </lines>
-            <groups>
-                <Group
-                    key="{xref>id}"
-                    title="{xref>name}"
-                    status="{xref>status}"
-                >
-                    <attributes>
-                        <ElementAttribute
-                            label="Package"
-                            value="{xref>devclass}"
-                        />
-                    </attributes>
-                </Group>
-            </groups>
-            <statuses>
-                <Status
-                    key="CustomSap"
-                    title="SAP"
-                    backgroundColor="lightgray"
-                />
-            </statuses>
-            <dependents>
-                <m:OverflowToolbarButton
-                    id="collapseAllButton"
-                    icon="sap-icon://collapse-all"
-                    text="{i18n>collapseAllGroups}"
-                    type="Transparent"
-                    press="onCollapseAllGroups"
-                />
-                <m:OverflowToolbarButton
-                    id="expandAllButton"
-                    icon="sap-icon://expand-all"
-                    text="{i18n>expandAllGroups}"
-                    type="Transparent"
-                    press="onExpandAllGroups"
-                />
-            </dependents>
-        </Graph>
-        <GraphMap
-            id="map"
-            graph="graph"
-            class="sapUiHideOnPhone"
-        >
-            <layoutData>
-                <m:FlexItemData
-                    minWidth="200px"
-                    maxWidth="25%"
-                />
-            </layoutData>
-        </GraphMap>
-    </m:HBox>
+            </Panel>
+        </semantic:content>
+    </semantic:SemanticPage>
 </mvc:View>
