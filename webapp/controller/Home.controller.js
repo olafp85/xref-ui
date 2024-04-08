@@ -4,17 +4,18 @@ sap.ui.define([
     "sap/ui/model/FilterOperator",
     "sap/ui/model/Sorter",
     "sap/ui/model/json/JSONModel",
-    "sap/m/InputType",
-    "sap/m/ListMode",
-    "sap/m/ListType",
+    "sap/m/library",
     "sap/m/MessageBox",
     "sap/m/MessageToast"
 ],
     /**
      * @param {typeof sap.ui.core.mvc.Controller} Controller
      */
-    function (BaseController, Filter, FilterOperator, Sorter, JSONModel, InputType, ListMode, ListType, MessageBox, MessageToast) {
+    function (BaseController, Filter, FilterOperator, Sorter, JSONModel, sapMLibrary, MessageBox, MessageToast) {
         "use strict";
+
+        // Get sap.m enumerations 
+        const { InputType, ListMode, ListType } = sapMLibrary;
 
         return BaseController.extend("xref.controller.Home", {
             // Models
@@ -28,19 +29,10 @@ sap.ui.define([
             sortDialog: null,
 
             onInit: function () {
-                // Initialize the xrefs model
-                this.Xrefs = this.getOwnerComponent().XrefsModel;
-                this.Xrefs.attachRequestSent(() => this.byId("table").setBusy(true));
-                this.Xrefs.attachRequestCompleted(() => this.byId("table").setBusy(false));
-                this.Xrefs.load().catch(({ message }) => MessageBox.error(message));
-
-                // User model
-                this.User = this.getOwnerComponent().UserModel;
-
                 // Initialize the view model
                 this.viewModel = new JSONModel({
                     version: this.getOwnerComponent().getManifestEntry("/sap.app/applicationVersion/version"),
-                    uploadUrl: this.Xrefs.URI,
+                    uploadUrl: this.getOwnerComponent().XrefsModel.URI,
                     authorization: null,
                     action: {
                         login: true,
@@ -51,13 +43,29 @@ sap.ui.define([
                     },
                     table: {
                         count: 0,
-                        mode: ListMode.None
+                        mode: ListMode.None,
+                        system: {
+                            value: "",
+                            items: [{ key: "", text: "" }]
+                        },
+                        search: ""
                     },
                     columnListItem: {
                         type: ListType.Navigation
                     }
                 });
                 this.getView().setModel(this.viewModel, "view");
+
+                // Initialize the xrefs model
+                this.Xrefs = this.getOwnerComponent().XrefsModel;
+                this.Xrefs.attachRequestSent(() => this.byId("table").setBusy(true));
+                this.Xrefs.attachRequestCompleted(() => this.byId("table").setBusy(false));
+                this.Xrefs.load()
+                    .then((xrefs) => this._initSystems(xrefs))
+                    .catch(({ message }) => MessageBox.error(message));
+
+                // User model
+                this.User = this.getOwnerComponent().UserModel;
             },
 
             onDisplay: function () {
@@ -169,19 +177,8 @@ sap.ui.define([
                     .catch(({ message }) => MessageBox.error(message));
             },
 
-            onSearch: function (event) {
-                const value = event.getSource().getValue();
-                const binding = this.byId("table").getBinding("items");
-                if (!value) return binding.filter(null);
-
-                binding.filter(new Filter({
-                    filters: [
-                        new Filter("type", FilterOperator.Contains, value),
-                        new Filter("name", FilterOperator.Contains, value),
-                        new Filter("system", FilterOperator.Contains, value)
-                    ],
-                    and: false
-                }));
+            onSearch: function () {
+                this._filterItems();
             },
 
             onSort: function () {
@@ -208,6 +205,13 @@ sap.ui.define([
                 this.byId("table").getBinding("items").sort(sorters);
             },
 
+            onSystemChange: function () {
+                this._filterItems();
+
+                // Save the last selected system 
+                localStorage.setItem("system", this.viewModel.getProperty("/table/system/value"));
+            },
+
             onUpdateFinished: function (event) {
                 // Fires after items binding is updated 
                 this.viewModel.setProperty("/table/count", event.getParameter("total"));
@@ -232,6 +236,43 @@ sap.ui.define([
             onUser: function (event) {
                 let button = event.getSource();
                 this.byId("userDialog").openBy(button);
+            },
+
+            _filterItems: function () {
+                let filters = [];
+
+                const system = this.viewModel.getProperty("/table/system/value");
+                if (system) {
+                    filters.push(new Filter("system", FilterOperator.EQ, system));
+                }
+
+                const search = this.viewModel.getProperty("/table/search");
+                if (search) {
+                    filters.push(new Filter({
+                        filters: [
+                            new Filter("type", FilterOperator.Contains, search),
+                            new Filter("name", FilterOperator.Contains, search),
+                            new Filter("system", FilterOperator.Contains, search)
+                        ],
+                        and: false
+                    }))
+                }
+
+                this.byId("table").getBinding("items").filter(filters);
+            },
+
+            _initSystems: function (xrefs) {
+                // Unique list of systems 
+                const systems = [...new Set(xrefs.map(xref => xref.system))];
+                const items = ["", ...systems].map(system => ({ key: system, text: system }));
+                this.viewModel.setProperty("/table/system/items", items);
+
+                // Restore the last selected system
+                const system = localStorage.getItem("system");
+                if (system) {
+                    this.viewModel.setProperty("/table/system/value", system);
+                    this._filterItems();
+                }
             },
 
             _setEditMode: function (on = true) {

@@ -52,6 +52,7 @@ sap.ui.define([
             load: async function () {
                 try {
                     await this.loadData(this.URI);
+                    return this.getData();
                 } catch ({ statusText, responseText }) {
                     try {
                         let responseJson = JSON.parse(responseText);

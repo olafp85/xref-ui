@@ -69,10 +69,32 @@
                         }"
                         />
                         <ToolbarSpacer />
-                        <SearchField liveChange="onSearch">
+                        <Select
+                            items="{
+                                path: 'view>/table/system/items',
+                                sorter: { path: 'text' }
+                            }"
+                            selectedKey="{view>/table/system/value}"
+                            change="onSystemChange"
+                        >
+                            <core:Item
+                                key="{view>key}"
+                                text="{view>text}"
+                            />
                             <layoutData>
                                 <OverflowToolbarLayoutData
-                                    maxWidth="15rem"
+                                    shrinkable="false"
+                                    priority="NeverOverflow"
+                                />
+                            </layoutData>
+                        </Select>
+                        <SearchField
+                            value="{view>/table/search}"
+                            liveChange="onSearch"
+                        >
+                            <layoutData>
+                                <OverflowToolbarLayoutData
+                                    maxWidth="10rem"
                                     shrinkable="true"
                                     priority="NeverOverflow"
                                 />
