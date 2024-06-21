@@ -15,7 +15,11 @@
         class="sapUiResponsiveContentPadding"
     >
         <semantic:titleHeading>
-            <Title text="{xref>/name}" />
+            <Title
+                id="title"
+                text="{xref>/name}"
+                class="link"
+            />
         </semantic:titleHeading>
 
         <semantic:titleContent>

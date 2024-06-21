@@ -79,6 +79,14 @@ sap.ui.define([
             this.getView()
                 .byId("selection-combo-box")
                 .setFilterFunction((value, item) => item.getText().match(new RegExp(value, "i")));
+
+            // Make the title clickable
+            this.getView()
+                .byId("title")
+                .attachBrowserEvent("click", () => {
+                    this.viewModel.setProperty("/selection/value", this.Xref.getProperty("/unit"));
+                    this.onSelectionChange();
+                })
         },
 
         onInOutLengthChange: function (event) {
