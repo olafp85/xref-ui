@@ -87,10 +87,10 @@ sap.ui.define([
 
         nodeName: function (id) {
             // "\FG:SBAL\FU:BAL_LOG_CREATE" => "fg:sbal | fu:bal_log_create" 
-            return id
+            const newId = id
                 .slice(1)
-                .toLowerCase()
                 .replaceAll("\\", this.COMPONENT_SEPARATOR);
+            return (newId.startsWith('cds:')) ? newId : newId.toLowerCase()
         }
     });
 });
