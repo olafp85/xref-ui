@@ -136,7 +136,7 @@
                             max="{view>/inLength/max}"
                             value="{view>/inLength/value}"
                             enabled="{view>/inLength/enabled}"
-                            enableTickmarks="false"
+                            enableTickmarks="true"
                             liveChange="onInOutLengthChange"
                         >
                             <layoutData>

@@ -134,22 +134,7 @@ sap.ui.define([
 
         onNodeUnselect: function (event) {
             this.cy.elements().removeClass("path not-path");
-
-            this.viewModel.setData({
-                selection: {
-                    value: ""
-                },
-                inLength: {
-                    value: 0,
-                    max: 1,  // Setting it to 0 doesn't work correctly in the UI
-                    enabled: false
-                },
-                outLength: {
-                    value: 0,
-                    max: 1,
-                    enabled: false
-                },
-            }, true /* merge */);
+            this._refreshViewModel();
 
             // Refresh the layout only when the subgraph is shown
             let highlight = Boolean(this.viewModel.getProperty("/highlight"));
@@ -167,6 +152,7 @@ sap.ui.define([
                     let graph = new Graph(xref);
                     this.viewModel.setProperty("/condense/value", 0);
                     this.viewModel.setProperty("/condense/max", graph.nodeDepth);
+                    this._refreshViewModel();
                     this._showGraph(graph);
                 })
                 .catch(({ message }) => MessageBox.error(message));
@@ -305,6 +291,24 @@ sap.ui.define([
             let layout = this.cy.layout(options);
             layout.on("layoutstop", this.onLayoutStop.bind(this));
             layout.run();
+        },
+
+        _refreshViewModel: function () {
+            this.viewModel.setData({
+                selection: {
+                    value: ""
+                },
+                inLength: {
+                    value: 0,
+                    max: 1,  // Setting it to 0 doesn't work correctly in the UI
+                    enabled: false
+                },
+                outLength: {
+                    value: 0,
+                    max: 1,
+                    enabled: false
+                },
+            }, true /* merge */);
         },
 
         _showGraph: async function (graph) {
