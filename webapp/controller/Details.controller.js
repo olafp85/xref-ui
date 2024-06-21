@@ -271,9 +271,16 @@ sap.ui.define([
             if (!sapCalls) {
                 relevantEdges = relevantEdges.filter(edge => !edge.target().data("sap"));
             }
+
+            let relevantNodes = relevantEdges.connectedNodes();
+            if (scope === "all") {
+                const isolatedNodes = this.cy.nodes("[[degree = 0]]");
+                relevantNodes = relevantNodes.union(isolatedNodes);
+            }
+
             this.cy.elements().addClass("not-relevant");
             relevantEdges.removeClass("not-relevant");
-            relevantEdges.connectedNodes().removeClass("not-relevant");
+            relevantNodes.removeClass("not-relevant");
 
             this.onHighlightChange();
             this.onLabelsSelect();
