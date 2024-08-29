@@ -10,9 +10,9 @@
   ],
   "main": "webapp/index.html",
   "devDependencies": {
-    "@sap/ux-ui5-tooling": "^1.9.2",
-    "@ui5/cli": "^2.14.17",
-    "ftp-deploy": "^2.4.3"
+    "@sap/ux-ui5-tooling": "^1.14.4",
+    "@ui5/cli": "^4.0.6",
+    "ftp-deploy": "^2.4.7"
   },
   "scripts": {
     "start": "fiori run --open \"index.html?sap-ui-xx-viewCache=false&sap-ui-xx-componentPreload=off\"",
