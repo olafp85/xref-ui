@@ -205,7 +205,6 @@
                                 formatOptions: {
                                     source: { pattern: 'yyyy-MM-dd' },
                                     relative: 'true', 
-                                    relativeRange: [-2, 2],
                                     style: 'long'
                                 }
                             }"
