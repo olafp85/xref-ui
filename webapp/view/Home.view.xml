@@ -188,7 +188,9 @@
                     >
                         <cells>
                             <Text text="{= ${xrefs>type}.toLowerCase()}" />
-                            <Text text="{xrefs>name}" />
+                            <Text
+                                text="{= ${xrefs>name} + (${xrefs>component} || '').toLowerCase().replaceAll('\\',' | ')}"
+                            />
                             <Text text="{xrefs>component}" />
                             <Text text="{xrefs>depthWhereUsed}" />
                             <Text text="{xrefs>depthCalls}" />

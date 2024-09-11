@@ -23,12 +23,14 @@
         </semantic:titleHeading>
 
         <semantic:titleContent>
-            <FlexBox
+            <VBox
                 height="2rem"
-                alignItems="Center"
+                justifyContent="Center"
             >
-                <Text text="{= ${xref>/type}.toLowerCase()}" />
-            </FlexBox>
+                <Text
+                    text="{= ${xref>/type}.toLowerCase() + (${xref>/component} || '').toLowerCase().replaceAll('\\',' | ')}"
+                />
+            </VBox>
         </semantic:titleContent>
 
         <semantic:headerContent>
