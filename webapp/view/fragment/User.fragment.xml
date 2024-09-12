@@ -1,29 +1,30 @@
-<core:FragmentDefinition xmlns="sap.m"
+<core:FragmentDefinition
+    xmlns="sap.m"
     xmlns:f="sap.f"
-    xmlns:core="sap.ui.core">
-
-    <ResponsivePopover id="userDialog"
+    xmlns:core="sap.ui.core"
+>
+    <ResponsivePopover
+        id="userDialog"
         title="{user>/name}"
-        placement="Bottom">
-
+        placement="Bottom"
+    >
         <subHeader>
             <Toolbar>
-                <Label text="{user>/email}">
-                </Label>
+                <Label text="{user>/email}" />
             </Toolbar>
         </subHeader>
 
         <content>
-            <List >
+            <List>
                 <items>
-                    <StandardListItem type="Active"
+                    <StandardListItem
+                        type="Active"
                         icon="sap-icon://log"
                         title="{i18n-sap.m>SHELL_LOGOUT}"
-                        press="onLogout" />
+                        press="onLogout"
+                    />
                 </items>
             </List>
         </content>
-
     </ResponsivePopover>
-
 </core:FragmentDefinition>
