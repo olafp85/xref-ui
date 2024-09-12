@@ -1,0 +1,29 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+    xmlns:form="sap.ui.layout.form"
+>
+    <Dialog
+        id="aboutDialog"
+        title="{i18n>about}"
+        titleAlignment="Center"
+        class="sapUiResponsivePadding"
+    >
+        <content>
+            <form:SimpleForm>
+                <Label text="{i18n>version}" />
+                <Text text="{/appVersion}" />
+                <Label text="SAPUI5" />
+                <Text text="{/sapVersion}" />
+            </form:SimpleForm>
+        </content>
+
+        <buttons>
+            <Button
+                text="{i18n-sap.m>MSGBOX_OK}"
+                type="Emphasized"
+                press="onAboutClose"
+            />
+        </buttons>
+    </Dialog>
+</core:FragmentDefinition>

@@ -1,9 +1,11 @@
 sap.ui.define([
     "xref/controller/BaseController",
+    "sap/ui/core/format/DateFormat",
     "sap/ui/model/Filter",
     "sap/ui/model/FilterOperator",
     "sap/ui/model/Sorter",
     "sap/ui/model/json/JSONModel",
+    "sap/ui/VersionInfo",
     "sap/m/library",
     "sap/m/MessageBox",
     "sap/m/MessageToast"
@@ -11,7 +13,7 @@ sap.ui.define([
     /**
      * @param {typeof sap.ui.core.mvc.Controller} Controller
      */
-    function (BaseController, Filter, FilterOperator, Sorter, JSONModel, sapMLibrary, MessageBox, MessageToast) {
+    function (BaseController, DateFormat, Filter, FilterOperator, Sorter, JSONModel, VersionInfo, sapMLibrary, MessageBox, MessageToast) {
         "use strict";
 
         // Get sap.m enumerations 
@@ -26,12 +28,34 @@ sap.ui.define([
             // References to the dialogs
             loginDialog: null,
             userDialog: null,
+            aboutDialog: null,
             sortDialog: null,
+
+            onAbout: async function () {
+                if (this.aboutDialog) {
+                    return this.aboutDialog.open();
+                }
+
+                const versionInfo = await VersionInfo.load();
+                const buildTimestamp = DateFormat.getDateTimeInstance({ pattern: "yyyyMMddHHmm" }).parse(versionInfo.buildTimestamp);
+
+                const viewModel = new JSONModel({
+                    appVersion: this.getOwnerComponent().getManifestEntry("/sap.app/applicationVersion/version"),
+                    sapVersion: `${versionInfo.version} (${DateFormat.getDateInstance({ style: "medium" }).format(buildTimestamp)})`
+                });
+
+                const aboutDialog = this.byId("aboutDialog");
+                aboutDialog.setModel(viewModel).open();
+                this.aboutDialog = aboutDialog;
+            },
+
+            onAboutClose: function () {
+                this.aboutDialog.close();
+            },
 
             onInit: function () {
                 // Initialize the view model
                 this.viewModel = new JSONModel({
-                    version: this.getOwnerComponent().getManifestEntry("/sap.app/applicationVersion/version"),
                     uploadUrl: this.getOwnerComponent().XrefsModel.URI,
                     authorization: null,
                     action: {

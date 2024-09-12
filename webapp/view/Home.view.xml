@@ -11,10 +11,6 @@
         class="sapUiResponsiveContentPadding--header sapUiResponsiveContentPadding"
     >
         <headerContent>
-            <Text
-                text="v{view>/version}"
-                visible="false"
-            />
             <Button
                 text="{i18n>htmlVersion}"
                 press="library.URLHelper.redirect('https://luukpohlmann.nl/apps/xref-html/', true)"
@@ -33,6 +29,10 @@
                     <core:Fragment
                         type="XML"
                         fragmentName="xref.view.fragment.User"
+                    />
+                    <core:Fragment
+                        type="XML"
+                        fragmentName="xref.view.fragment.About"
                     />
                 </dependents>
             </Avatar>
