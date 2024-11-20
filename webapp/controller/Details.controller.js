@@ -35,6 +35,11 @@ sap.ui.define([
             if (event) this._refreshLayout();
         },
 
+        onInfo: function (event) {
+            let button = event.getSource();
+            this.byId("infoDialog").openBy(button);
+        },
+
         onInit: function () {
             this.getRouter().getRoute("Details").attachMatched(this.onRouteMatch, this);
 

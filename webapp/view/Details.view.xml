@@ -33,6 +33,20 @@
             </VBox>
         </semantic:titleContent>
 
+        <semantic:titleCustomIconActions>
+            <OverflowToolbarButton
+                icon="sap-icon://hint"
+                press="onInfo"
+            >
+                <dependents>
+                    <core:Fragment
+                        type="XML"
+                        fragmentName="xref.view.fragment.Info"
+                    />
+                </dependents>
+            </OverflowToolbarButton>
+        </semantic:titleCustomIconActions>
+
         <semantic:headerContent>
             <!--
                 Sizes: [columns used by the labels] : [columns for the fields] : [empty columns]
