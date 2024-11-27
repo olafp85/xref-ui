@@ -329,6 +329,20 @@ sap.ui.define([
             // Cytoscape event handlers 
             this.cy.on("select", "node", this.onNodeSelect.bind(this));
             this.cy.on("unselect", "node", this.onNodeUnselect.bind(this));
+
+            // Context menu
+            const i18n = await this.getView().getModel("i18n").getResourceBundle();
+            this.cy.contextMenus({
+                menuItems: [
+                    {
+                        content: i18n.getText("hide"),
+                        selector: "node",
+                        onClickFunction: (event) => {
+                            event.target.remove();
+                            this._refreshLayout();
+                        }
+                    }]
+            });
         },
 
         _showSelection: function () {

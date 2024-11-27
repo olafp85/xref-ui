@@ -10,7 +10,10 @@ sap.ui.loader.config({
         // Cose bilkent extension (https://github.com/cytoscape/cytoscape.js-cose-bilkent#api)
         "cytoscape-cose-bilkent": "https://cdn.jsdelivr.net/npm/cytoscape-cose-bilkent@4.1.0/cytoscape-cose-bilkent.min",
         "cose-base": "https://cdn.jsdelivr.net/npm/cose-base@2.2.0/cose-base.min",
-        "layout-base": "https://cdn.jsdelivr.net/npm/layout-base@2.0.1/layout-base.min"
+        "layout-base": "https://cdn.jsdelivr.net/npm/layout-base@2.0.1/layout-base.min",
+
+        // Context menu around elements and core instance
+        "cytoscape-context-menus": "https://cdn.jsdelivr.net/npm/cytoscape-context-menus@4.2.1/cytoscape-context-menus.min",
     },
     shim: {
         "cytoscape": {
@@ -34,18 +37,23 @@ sap.ui.loader.config({
         "layout-base": {
             exports: "layoutBase"
         },
+        "cytoscape-context-menus": {
+            exports: "cytoscapeContextMenus"
+        }
     }
 });
 
 sap.ui.define([
     "cytoscape",
     "cytoscape-cola",
-    "cytoscape-cose-bilkent"
-], function (cytoscape, cola, coseBilkent) {
+    "cytoscape-cose-bilkent",
+    "cytoscape-context-menus"
+], function (cytoscape, cola, coseBilkent, contextMenus) {
     "use strict";
 
     cytoscape.use(cola);
     cytoscape.use(coseBilkent);
+    cytoscape.use(contextMenus);
 
     return cytoscape;
 });
