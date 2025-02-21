@@ -317,12 +317,17 @@ sap.ui.define([
         },
 
         _showGraph: async function (graph) {
-            this.cy = cytoscape({
-                container: document.getElementById("cy"),
-                elements: graph.elements,
-                style: await this.style,
-                wheelSensitivity: 0.1  // Reduced sensitivity
-            });
+            try {
+                this.cy = cytoscape({
+                    container: document.getElementById("cy"),
+                    elements: graph.elements,
+                    style: await this.style,
+                    wheelSensitivity: 0.1  // Reduced sensitivity
+                });
+            } catch (error) {
+                MessageBox.error(error.message);
+                return;
+            }
 
             this._refreshGraph();
 
