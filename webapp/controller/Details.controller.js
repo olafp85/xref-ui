@@ -118,17 +118,25 @@ sap.ui.define([
             let node = event.target;
             let inMaxLength = this._nodeInMaxLength(node);
             let outMaxLength = this._nodeOutMaxLength(node);
+            let inLength = this.viewModel.getProperty("/inLength/value");
+            let outLength = this.viewModel.getProperty("/outLength/value");
+
+            if (!inLength && !outLength) {
+                inLength = 1;
+                outLength = 1;
+            }
+
             this.viewModel.setData({
                 selection: {
                     value: node.id(),
                 },
                 inLength: {
-                    value: (inMaxLength) ? 1 : 0,
+                    value: Math.min(inLength, inMaxLength),
                     max: inMaxLength || 1,
                     enabled: Boolean(inMaxLength)
                 },
                 outLength: {
-                    value: (outMaxLength) ? 1 : 0,
+                    value: Math.min(outLength, outMaxLength),
                     max: outMaxLength || 1,
                     enabled: Boolean(outMaxLength)
                 },
@@ -304,13 +312,9 @@ sap.ui.define([
                     value: ""
                 },
                 inLength: {
-                    value: 0,
-                    max: 1,  // Setting it to 0 doesn't work correctly in the UI
                     enabled: false
                 },
                 outLength: {
-                    value: 0,
-                    max: 1,
                     enabled: false
                 },
             }, true /* merge */);
