@@ -33,6 +33,8 @@
                         }
                     }"
                 />
+                <Label text="{i18n>unitCount}" />
+                <Text text="{= ${xref>/units}.length}" />
             </form:SimpleForm>
         </content>
     </ResponsivePopover>
