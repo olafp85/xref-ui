@@ -16,13 +16,13 @@
             </HBox>
             <Input
                 value="{/credentials/email}"
-                liveChange="onLoginCheckInput"
+                liveChange=".onLoginCheckInput"
                 placeholder="E-mail"
             />
             <Input
                 value="{/credentials/password}"
                 type="Password"
-                liveChange="onLoginCheckInput"
+                liveChange=".onLoginCheckInput"
                 placeholder="Password"
             />
         </content>
@@ -31,12 +31,12 @@
             <Button
                 text="{i18n>login}"
                 type="Emphasized"
-                press="onLoginConfirm"
+                press=".onLoginConfirm"
                 enabled="{/proceed}"
             />
             <Button
                 text="Cancel"
-                press="onLoginCancel"
+                press=".onLoginCancel"
             />
         </buttons>
     </Dialog>

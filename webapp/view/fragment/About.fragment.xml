@@ -22,7 +22,7 @@
             <Button
                 text="{i18n-sap.m>MSGBOX_OK}"
                 type="Emphasized"
-                press="onAboutClose"
+                press=".onAboutClose"
             />
         </buttons>
     </Dialog>

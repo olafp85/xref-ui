@@ -3,7 +3,7 @@
     xmlns:mvc="sap.ui.core.mvc"
     xmlns:core="sap.ui.core"
     xmlns="sap.m"
-    core:require="{ formatMessage: 'sap/base/strings/formatMessage', library: 'sap/m/library' }"
+    core:require="{ formatMessage: 'sap/base/strings/formatMessage', library: 'sap/m/library', Date: 'sap/ui/model/type/Date' }"
 >
     <Page
         title="{i18n>appTitle}"
@@ -17,12 +17,12 @@
             />
             <Button
                 text="{i18n>login}"
-                press="onLogin"
+                press=".onLogin"
                 visible="{view>/action/login}"
             />
             <Avatar
                 displaySize="XS"
-                press="onUser"
+                press=".onUser"
                 visible="{view>/action/logout}"
             >
                 <dependents>
@@ -53,8 +53,8 @@
                 sticky="ColumnHeaders"
                 hiddenInPopin="Low"
                 mode="{view>/table/mode}"
-                delete="onItemDelete"
-                updateFinished="onUpdateFinished"
+                delete=".onItemDelete"
+                updateFinished=".onUpdateFinished"
                 busyIndicatorDelay="0"
             >
                 <headerToolbar>
@@ -75,7 +75,7 @@
                                 sorter: { path: 'text' }
                             }"
                             selectedKey="{view>/table/system/value}"
-                            change="onSystemChange"
+                            change=".onSystemChange"
                         >
                             <core:Item
                                 key="{view>key}"
@@ -90,7 +90,7 @@
                         </Select>
                         <SearchField
                             value="{view>/table/search}"
-                            liveChange="onSearch"
+                            liveChange=".onSearch"
                         >
                             <layoutData>
                                 <OverflowToolbarLayoutData
@@ -103,7 +103,7 @@
                         <OverflowToolbarButton
                             icon="sap-icon://sort"
                             text="{i18n-sap.ui.core>Icon.sort}"
-                            press="onSort"
+                            press=".onSort"
                         >
                             <layoutData>
                                 <OverflowToolbarLayoutData group="1" />
@@ -112,7 +112,7 @@
                         <OverflowToolbarButton
                             icon="sap-icon://upload"
                             text="{i18n-sap.ui.core>Icon.upload}"
-                            press="onUpload"
+                            press=".onUpload"
                             visible="{view>/action/upload}"
                         >
                             <dependents>
@@ -128,7 +128,7 @@
                         <OverflowToolbarButton
                             icon="sap-icon://display"
                             text="{i18n-sap.ui.core>Icon.display}"
-                            press="onDisplay"
+                            press=".onDisplay"
                             visible="{view>/action/display}"
                         >
                             <layoutData>
@@ -138,7 +138,7 @@
                         <OverflowToolbarButton
                             icon="sap-icon://edit"
                             text="{i18n-sap.m>SEMANTIC_CONTROL_EDIT}"
-                            press="onEdit"
+                            press=".onEdit"
                             visible="{view>/action/edit}"
                         >
                             <layoutData>
@@ -184,7 +184,7 @@
                 <items>
                     <ColumnListItem
                         type="{view>/columnListItem/type}"
-                        press="onItemPress"
+                        press=".onItemPress"
                     >
                         <cells>
                             <Text text="{= ${xrefs>type}.toLowerCase()}" />
@@ -202,14 +202,14 @@
                             <Text text="{xrefs>release}" />
                             <Text
                                 text="{
-                                path: 'xrefs>date',
-                                type: 'sap.ui.model.type.Date',
-                                formatOptions: {
-                                    source: { pattern: 'yyyy-MM-dd' },
-                                    relative: 'true', 
-                                    style: 'long'
-                                }
-                            }"
+                                    path: 'xrefs>date',
+                                    type: 'Date',
+                                    formatOptions: {
+                                        source: { pattern: 'yyyy-MM-dd' },
+                                        relative: true, 
+                                        style: 'long'
+                                    }
+                                }"
                             />
                         </cells>
                     </ColumnListItem>

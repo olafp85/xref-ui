@@ -1,23 +1,29 @@
-<core:FragmentDefinition xmlns="sap.m"
+<core:FragmentDefinition
+    xmlns="sap.m"
     xmlns:core="sap.ui.core"
-    xmlns:upload="sap.m.upload">
-
-    <ResponsivePopover id="uploadDialog"
-        placement="Bottom">
-
+    xmlns:upload="sap.m.upload"
+>
+    <ResponsivePopover
+        id="uploadDialog"
+        placement="Bottom"
+    >
         <content>
-            <upload:UploadSet fileTypes="json"
+            <upload:UploadSet
+                fileTypes="json"
                 uploadUrl="{view>/uploadUrl}"
-                uploadCompleted="onUploadCompleted">
+                uploadCompleted=".onUploadCompleted"
+            >
                 <upload:headerFields>
-                    <core:Item key="Accept"
-                        text="application/json"/>
-                    <core:Item key="Authorization"
-                        text="{view>/authorization}"/>
+                    <core:Item
+                        key="Accept"
+                        text="application/json"
+                    />
+                    <core:Item
+                        key="Authorization"
+                        text="{view>/authorization}"
+                    />
                 </upload:headerFields>
             </upload:UploadSet>
         </content>
-
     </ResponsivePopover>
-
 </core:FragmentDefinition>

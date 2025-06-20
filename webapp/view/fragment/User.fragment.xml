@@ -21,7 +21,7 @@
                         type="Active"
                         icon="sap-icon://hint"
                         title="{i18n>about}"
-                        press="onAbout"
+                        press=".onAbout"
                     />
                 </items>
                 <items>
@@ -29,7 +29,7 @@
                         type="Active"
                         icon="sap-icon://log"
                         title="{i18n-sap.m>SHELL_LOGOUT}"
-                        press="onLogout"
+                        press=".onLogout"
                     />
                 </items>
             </List>

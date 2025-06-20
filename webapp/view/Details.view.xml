@@ -36,7 +36,7 @@
         <semantic:titleCustomIconActions>
             <OverflowToolbarButton
                 icon="sap-icon://hint"
-                press="onInfo"
+                press=".onInfo"
             >
                 <dependents>
                     <core:Fragment
@@ -71,7 +71,7 @@
                             max="{view>/condense/max}"
                             value="{view>/condense/value}"
                             enableTickmarks="true"
-                            liveChange="onCondenseChange"
+                            liveChange=".onCondenseChange"
                         >
                             <layoutData>
                                 <layout:GridData span="L3 M4 S6" />
@@ -81,7 +81,7 @@
                         <!-- Scope -->
                         <SegmentedButton
                             selectedKey="{view>/scope}"
-                            selectionChange="onScopeChange"
+                            selectionChange=".onScopeChange"
                         >
                             <items>
                                 <SegmentedButtonItem
@@ -106,7 +106,7 @@
                         <CheckBox
                             text="SAP calls"
                             selected="{view>/sapCalls}"
-                            select="onSapCallsSelect"
+                            select=".onSapCallsSelect"
                         >
                             <layoutData>
                                 <layout:GridData span="L2 M2 S4" />
@@ -123,7 +123,7 @@
                                 length: 999
                             }"
                             selectedKey="{view>/selection/value}"
-                            selectionChange="onSelectionChange"
+                            selectionChange=".onSelectionChange"
                             showClearIcon="true"
                         >
                             <core:Item
@@ -139,7 +139,7 @@
                         <CheckBox
                             text="Labels"
                             selected="{view>/labels}"
-                            select="onLabelsSelect"
+                            select=".onLabelsSelect"
                         >
                             <layoutData>
                                 <layout:GridData span="L2 M2 S4" />
@@ -153,7 +153,7 @@
                             value="{view>/inLength/value}"
                             enabled="{view>/inLength/enabled}"
                             enableTickmarks="true"
-                            liveChange="onInOutLengthChange"
+                            liveChange=".onInOutLengthChange"
                         >
                             <layoutData>
                                 <layout:GridData span="L3 M4 S6" />
@@ -166,7 +166,7 @@
                             value="{view>/outLength/value}"
                             enabled="{view>/outLength/enabled}"
                             enableTickmarks="true"
-                            liveChange="onInOutLengthChange"
+                            liveChange=".onInOutLengthChange"
                         >
                             <layoutData>
                                 <layout:GridData span="L3 M4 S6" />
@@ -177,7 +177,7 @@
                         <CheckBox
                             text="Spring layout"
                             selected="{view>/springLayout}"
-                            select="onSpringLayoutSelect"
+                            select=".onSpringLayoutSelect"
                         >
                             <layoutData>
                                 <layout:GridData span="L2 M2 S6" />
@@ -190,7 +190,7 @@
                             max="5"
                             value="{view>/edgeLength}"
                             enableTickmarks="true"
-                            liveChange="onEdgeLengthChange"
+                            liveChange=".onEdgeLengthChange"
                         >
                             <layoutData>
                                 <layout:GridData span="L3 M4 S6" />
@@ -200,7 +200,7 @@
                         <!-- Highlight -->
                         <SegmentedButton
                             selectedKey="{view>/highlight}"
-                            selectionChange="onHighlightChange"
+                            selectionChange=".onHighlightChange"
                         >
                             <items>
                                 <SegmentedButtonItem

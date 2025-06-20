@@ -1,20 +1,26 @@
-<core:FragmentDefinition xmlns="sap.m"
-    xmlns:core="sap.ui.core">
-
-    <ViewSettingsDialog confirm="onSortConfirm">
-
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+>
+    <ViewSettingsDialog confirm=".onSortConfirm">
         <sortItems>
-            <ViewSettingsItem text="{i18n>type}"
+            <ViewSettingsItem
+                text="{i18n>type}"
                 key="type"
-                selected="true" />
-            <ViewSettingsItem text="{i18n>name}"
-                key="name" />
-            <ViewSettingsItem text="{i18n>system}"
-                key="system" />
-            <ViewSettingsItem text="{i18n>date}"
-                key="date" />
+                selected="true"
+            />
+            <ViewSettingsItem
+                text="{i18n>name}"
+                key="name"
+            />
+            <ViewSettingsItem
+                text="{i18n>system}"
+                key="system"
+            />
+            <ViewSettingsItem
+                text="{i18n>date}"
+                key="date"
+            />
         </sortItems>
-
     </ViewSettingsDialog>
-
 </core:FragmentDefinition>
