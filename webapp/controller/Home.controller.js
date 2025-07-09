@@ -102,7 +102,7 @@ sap.ui.define([
 
             onItemDelete: function (event) {
                 const { id, type, name } = event.getParameter("listItem").getBindingContext(this.Xrefs.ID).getObject();
-                const text = `Delete item "${type.toLowerCase()} ${name}"?`
+                const text = `Delete item "${type.toLowerCase()} ${name}"?`;
 
                 MessageBox.confirm(text, {
                     icon: MessageBox.Icon.WARNING,
@@ -115,7 +115,7 @@ sap.ui.define([
                             .then(() => MessageToast.show("Item was deleted successfully"))
                             .catch(({ message }) => MessageBox.error(message));
                     }
-                })
+                });
             },
 
             onItemPress: function (event) {
@@ -196,7 +196,7 @@ sap.ui.define([
                         this.viewModel.setProperty("/action/logout", false);
                         this.viewModel.setProperty("/action/upload", false);
                         this.viewModel.setProperty("/action/edit", false);
-                        MessageToast.show("Successfully signed out")
+                        MessageToast.show("Successfully signed out");
                     })
                     .catch(({ message }) => MessageBox.error(message));
             },
@@ -223,7 +223,7 @@ sap.ui.define([
 
                 // Secundairy sort by name
                 if (sortItem.getKey() !== "name") {
-                    sorters.push(new Sorter("name", sortDescending))
+                    sorters.push(new Sorter("name", sortDescending));
                 }
 
                 this.byId("table").getBinding("items").sort(sorters);
@@ -279,7 +279,7 @@ sap.ui.define([
                             new Filter("system", FilterOperator.Contains, search)
                         ],
                         and: false
-                    }))
+                    }));
                 }
 
                 this.byId("table").getBinding("items").filter(filters);

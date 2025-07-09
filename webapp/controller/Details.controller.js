@@ -91,7 +91,7 @@ sap.ui.define([
                 .attachBrowserEvent("click", () => {
                     this.viewModel.setProperty("/selection/value", this.Xref.getProperty("/unit"));
                     this.onSelectionChange();
-                })
+                });
         },
 
         onInOutLengthChange: function (event) {
@@ -109,7 +109,7 @@ sap.ui.define([
                 return {
                     key: node.id(),
                     text: node.data("name")
-                }
+                };
             });
             this.viewModel.setProperty("/selection/items", items);
         },
@@ -128,7 +128,7 @@ sap.ui.define([
 
             this.viewModel.setData({
                 selection: {
-                    value: node.id(),
+                    value: node.id()
                 },
                 inLength: {
                     value: Math.min(inLength, inMaxLength),
@@ -139,7 +139,7 @@ sap.ui.define([
                     value: Math.min(outLength, outMaxLength),
                     max: outMaxLength || 1,
                     enabled: Boolean(outMaxLength)
-                },
+                }
             }, true /* merge */);
 
             this._showSelection();
@@ -201,7 +201,7 @@ sap.ui.define([
                 let condensedUnit = {
                     ...unit,
                     id: condense(unit.id)
-                }
+                };
                 condensedUnits.set(unit.id, condensedUnit);
             });
 
@@ -212,7 +212,7 @@ sap.ui.define([
                     ...call,
                     source: condense(call.source),
                     target: condense(call.target)
-                }
+                };
                 if (condensedCall.source !== condensedCall.target) {
                     condensedCalls.set(JSON.stringify(condensedCall), condensedCall);
                 }
@@ -227,7 +227,7 @@ sap.ui.define([
 
         _nodeInElements: function (elements, depth) {
             let inElements = elements.incomers();
-            return (depth == 0) ? this.cy.collection() : inElements.union(this._nodeInElements(inElements, depth - 1));
+            return (depth === 0) ? this.cy.collection() : inElements.union(this._nodeInElements(inElements, depth - 1));
         },
 
         _nodeInMaxLength: function (node) {
@@ -245,7 +245,7 @@ sap.ui.define([
 
         _nodeOutElements: function (elements, depth) {
             let outElements = elements.outgoers();
-            return (depth == 0) ? this.cy.collection() : outElements.union(this._nodeOutElements(outElements, depth - 1));
+            return (depth === 0) ? this.cy.collection() : outElements.union(this._nodeOutElements(outElements, depth - 1));
         },
 
         _nodeOutMaxLength: function (node) {
@@ -293,12 +293,12 @@ sap.ui.define([
             let options = (springLayout) ?
                 {
                     name: "cose-bilkent",
-                    idealEdgeLength: 150 * factor,
+                    idealEdgeLength: 150 * factor
                 } :
                 {
                     name: "cola",
                     maxSimulationTime: 1000,
-                    edgeLength: (edgeLength) ? 100 * factor : undefined,
+                    edgeLength: (edgeLength) ? 100 * factor : undefined
                 };
 
             let layout = this.cy.layout(options);
@@ -316,7 +316,7 @@ sap.ui.define([
                 },
                 outLength: {
                     enabled: false
-                },
+                }
             }, true /* merge */);
         },
 

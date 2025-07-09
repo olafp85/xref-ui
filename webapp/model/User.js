@@ -22,7 +22,7 @@ sap.ui.define([
                         accept: "application/json"
                     },
                     body: JSON.stringify(credentials)
-                }
+                };
 
                 let response = await fetch(this.URI + "/login", options);
                 const contentType = response.headers.get("content-type");
@@ -39,7 +39,7 @@ sap.ui.define([
                     case 401:  // Unauthorized
                         return false;
                     default:
-                        throw new Error(result.message)
+                        throw new Error(result.message);
                 }
             },
 
@@ -50,7 +50,7 @@ sap.ui.define([
                         accept: "application/json",
                         authorization: "Bearer " + this.token
                     }
-                }
+                };
 
                 let response = await fetch(this.URI + "/logout", options);
                 if (response.ok) {

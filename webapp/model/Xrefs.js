@@ -17,7 +17,7 @@ sap.ui.define([
             },
 
             create: async function (body) {
-                let response = await fetch(this.URI, this.options('POST', body));
+                let response = await fetch(this.URI, this.options("POST", body));
                 let result = await response.json();
                 if (response.ok) {
                     await this.load();
@@ -28,7 +28,7 @@ sap.ui.define([
             },
 
             delete: async function (id) {
-                let response = await fetch(`${this.URI}/${id}`, this.options('DELETE'));
+                let response = await fetch(`${this.URI}/${id}`, this.options("DELETE"));
                 if (response.ok) {
                     await this.load();
                 } else {
@@ -57,8 +57,9 @@ sap.ui.define([
                     try {
                         let responseJson = JSON.parse(responseText);
                         throw new Error(responseJson.message);
-                    } catch (e) { }
-                    throw new Error(responseText ?? statusText);
+                    } catch (e) {
+                        throw new Error(responseText ?? statusText);
+                    }
                 }
             }
         });

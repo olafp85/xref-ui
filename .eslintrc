@@ -1,16 +1,30 @@
 {
     "plugins": [
-        "eslint-plugin-fiori-custom"
+        "fiori-custom"
     ],
     "extends": [
-        "./node_modules/eslint-plugin-fiori-custom/configure.eslintrc"
-    ],
-    "ignorePatterns": [
-        "webapp/localService/**",
-        "webapp/test/**",
-        "dist/**"
+        "eslint:recommended",
+        "plugin:fiori-custom/fioriToolsDefault"
     ],
     "rules": {
-        "linebreak-style": "off"
-    }
+        "curly": "off",
+        "linebreak-style": "off",
+        "fiori-custom/sap-no-localstorage": "off",
+        "fiori-custom/sap-no-hardcoded-url": "warn"
+    },
+    "env": {
+        "node": true,
+        "browser": true,
+        "es6": true,
+        "jest": true,
+        "jquery": false
+    },
+    "parserOptions": {
+        "ecmaVersion": 2022
+    },
+    "ignorePatterns": [
+        "dist/**",
+        "webapp/localService/**",
+        "webapp/test/**"
+    ]
 }
