@@ -11,7 +11,7 @@
             ]
         },
         "applicationVersion": {
-            "version": "0.0.40"
+            "version": "0.0.41"
         },
         "title": "{{appTitle}}",
         "description": "{{appDescription}}",
@@ -75,13 +75,13 @@
             "i18n-sap.m": {
                 "type": "sap.ui.model.resource.ResourceModel",
                 "settings": {
-                    "bundleUrl": "/resources/sap/m/messagebundle.properties"
+                    "bundleUrl": "https://ui5.sap.com/resources/sap/m/messagebundle.properties"
                 }
             },
             "i18n-sap.ui.core": {
                 "type": "sap.ui.model.resource.ResourceModel",
                 "settings": {
-                    "bundleUrl": "/resources/sap/ui/core/messagebundle.properties"
+                    "bundleUrl": "https://ui5.sap.com/resources/sap/ui/core/messagebundle.properties"
                 }
             }
         },
