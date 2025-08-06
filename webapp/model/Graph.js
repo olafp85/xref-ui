@@ -86,12 +86,22 @@ sap.ui.define([
         },
 
         nodeName: function (id) {
-            // "\FG:SBAL\FU:BAL_LOG_CREATE" => "fg:sbal | fu:bal_log_create" 
-            // "\TY:zCdsView" => "ty:zCdsView"
-            const newId = (id === id.toUpperCase()) ? id.toLowerCase() : id.replace(/..:/g, prefix => prefix.toLowerCase());
-            return newId
+            // FG:FUGR => fg:fugr
+            // TY:zCdsView => ty:zCdsView
+            const componentName = (component) => {
+                const [prefix, name] = component.split(":");
+                return [
+                    prefix.toLowerCase(),
+                    (name === name.toUpperCase()) ? name.toLowerCase() : name
+                ].join(":");
+            };
+
+            // \FG:FUGR\FU:FUNC => fg:fugr | fu:func
+            return id
                 .slice(1)
-                .replaceAll("\\", this.COMPONENT_SEPARATOR);
+                .split("\\")
+                .map(componentName)
+                .join(this.COMPONENT_SEPARATOR);
         }
     });
 });
