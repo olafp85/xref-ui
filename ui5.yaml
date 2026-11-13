@@ -1,12 +1,23 @@
 # yaml-language-server: $schema=https://sap.github.io/ui5-tooling/schema/ui5.yaml.json
 # https://www.npmjs.com/package/@sap/ux-ui5-tooling?activeTab=readme
 
-specVersion: "2.5"
+specVersion: "3.0"
 metadata:
   name: xref
 type: application
+builder:
+  customTasks:
+    # Transpile TypeScript to UI5 AMD-like modules
+    - name: ui5-tooling-transpile-task
+      afterTask: replaceVersion
+      configuration:
+        omitTSFromBuildResult: true
 server:
   customMiddleware:
+    # Serve TypeScript sources as transpiled JavaScript
+    - name: ui5-tooling-transpile-middleware
+      afterMiddleware: compression
+
     # Connect to different back-end systems or switch the SAPUI5 version of the application
     - name: fiori-tools-proxy
       afterMiddleware: compression
